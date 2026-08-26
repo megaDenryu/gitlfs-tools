@@ -1,0 +1,7 @@
+schema_version = 1
+
+[profiles.example-large-assets]
+rclone_remote = "example-remote"
+base_path = "example-large-assets"
+temp_directory = "D:/example-large-assets-tmp"
+transfer_timeout_seconds = 3600
