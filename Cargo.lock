@@ -210,6 +210,7 @@ dependencies = [
  "directories",
  "lfs-rclone-domain",
  "serde",
+ "tempfile",
  "thiserror",
  "toml",
 ]
@@ -258,7 +259,8 @@ version = "0.1.0"
 dependencies = [
  "lfs-rclone-domain",
  "lfs-rclone-storage-port",
- "thiserror",
+ "sha2",
+ "tempfile",
 ]
 
 [[package]]
