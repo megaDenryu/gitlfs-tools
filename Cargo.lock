@@ -242,7 +242,10 @@ version = "0.1.0"
 dependencies = [
  "lfs-rclone-domain",
  "lfs-rclone-storage-port",
- "thiserror",
+ "serde",
+ "serde_json",
+ "sha2",
+ "tempfile",
 ]
 
 [[package]]

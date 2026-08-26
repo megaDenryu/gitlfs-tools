@@ -10,7 +10,12 @@ publish = false
 [dependencies]
 lfs-rclone-domain.workspace = true
 lfs-rclone-storage-port.workspace = true
-thiserror.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true
+sha2.workspace = true
 
 [lints]
 workspace = true
