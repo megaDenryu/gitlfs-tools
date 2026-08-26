@@ -10,10 +10,8 @@ use std::path::PathBuf;
 /// 起動側（`lfs-rclone-rclone`）の責務であり、ここでは行わない。
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Rclone実行ファイルの場所 {
-    /// PC設定`rclone_executable`が明示したパス。
-    明示された場所(PathBuf),
-    /// `rclone_executable`が省略された。PATH上の`rclone`を使うべきことを表す。
-    PATH上の実行ファイル,
+    明示された場所(PathBuf), // PC設定`rclone_executable`が明示したパス
+    PATH上の実行ファイル,     // `rclone_executable`が省略された。PATH上の`rclone`を使う
 }
 
 impl Rclone実行ファイルの場所 {
