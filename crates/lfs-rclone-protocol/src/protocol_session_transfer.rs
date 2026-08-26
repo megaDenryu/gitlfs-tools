@@ -10,7 +10,7 @@ use crate::protocol_session::プロトコルセッション;
 use crate::transfer_session_boundary::{開始済み転送セッション, 転送セッション開始境界};
 
 impl<境界: 転送セッション開始境界> プロトコルセッション<境界> {
-    pub(crate) fn アップロードを処理する(&self, セッション: &境界::開始済みセッション, oid: &str, size: u64, path: &str) {
+    pub(crate) fn アップロードを処理する(&self, セッション: &境界::開始済み転送セッション, oid: &str, size: u64, path: &str) {
         let 入力ファイル = 検証前のローカルファイル::生成する(path);
         let 要求 = match アップロード要求::生成する(oid, size, 入力ファイル) {
             Ok(要求) => 要求,
@@ -29,7 +29,7 @@ impl<境界: 転送セッション開始境界> プロトコルセッション<�
         }
     }
 
-    pub(crate) fn ダウンロードを処理する(&self, セッション: &境界::開始済みセッション, oid: &str, size: u64) {
+    pub(crate) fn ダウンロードを処理する(&self, セッション: &境界::開始済み転送セッション, oid: &str, size: u64) {
         let 要求 = match ダウンロード要求::生成する(oid, size) {
             Ok(要求) => 要求,
             Err(エラー) => {

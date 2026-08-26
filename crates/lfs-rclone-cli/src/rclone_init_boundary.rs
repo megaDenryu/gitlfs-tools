@@ -27,9 +27,9 @@ impl Rclone初期化境界 {
 }
 
 impl 転送セッション開始境界 for Rclone初期化境界 {
-    type 開始済みセッション = Rclone転送セッション;
+    type 開始済み転送セッション = Rclone転送セッション;
 
-    fn 開始する(&self, 操作種別: 転送操作種別) -> Result<Self::開始済みセッション, 初期化エラー> {
+    fn 開始する(&self, 操作種別: 転送操作種別) -> Result<Self::開始済み転送セッション, 初期化エラー> {
         eprintln!("initを処理します(operation={操作種別:?})");
 
         let プロジェクト設定 = プロジェクト設定の場所::探索する(&self.起点ディレクトリ)
