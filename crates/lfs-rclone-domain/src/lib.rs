@@ -8,6 +8,8 @@
 //! （コード分割規約.md 1節「命名」）。
 
 mod expected_byte_count;
+mod integrity_error;
+mod local_file_measurement;
 mod object_identifier;
 mod object_state;
 mod profile_name;
@@ -18,18 +20,18 @@ mod storage_object_path;
 mod temp_directory;
 mod temp_file_path;
 mod unique_identifier;
-mod unverified_local_file;
 mod verified_source;
 
 pub use expected_byte_count::期待バイト数;
+pub use integrity_error::整合性エラー;
+pub use local_file_measurement::検証前のローカルファイル;
 pub use object_identifier::オブジェクト識別子;
 pub use object_state::オブジェクト状態;
 pub use profile_name::プロファイル名;
 pub use rclone_remote_name::Rcloneリモート名;
 pub use storage_base_path::保管先基底パス;
-pub use storage_error::{保管エラー, 整合性エラー};
+pub use storage_error::保管エラー;
 pub use storage_object_path::保管先オブジェクトパス;
 pub use temp_directory::一時ディレクトリ;
 pub use temp_file_path::一時ファイルパス;
-pub use unverified_local_file::検証前のローカルファイル;
 pub use verified_source::検証済み転送元;
