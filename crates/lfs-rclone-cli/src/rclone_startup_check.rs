@@ -1,0 +1,32 @@
+//! `init`の起動確認2種（rclone実行ファイルの実在確認、rcloneの実行そのものの疎通確認）。
+//! `Rclone初期化境界::開始する`の一手続きとして呼ばれる私有ヘルパー
+//! （グローバルCLAUDE.md「サービスの依存保持とコールバックの限定」条1: 親のサービス型
+//! `Rclone初期化境界`が依存を保持した上での工程ヘルパー）。
+
+use lfs_rclone_domain::{オブジェクト識別子, 保管エラー, 期待バイト数, Rclone実行ファイルの場所};
+use lfs_rclone_protocol::初期化エラー;
+use lfs_rclone_rclone::Rclone保管庫;
+use lfs_rclone_storage_port::オブジェクト保管庫;
+
+const 識別子の文字数: usize = 64;
+
+/// PC設定`rclone_executable`が絶対/相対パスを明示している場合だけ、事前にファイルの
+/// 実在を確かめる。PATH解決の場合は事前確認せず、後続の疎通確認（`rcloneの起動を確認する`）
+/// へ委ねる。
+pub(crate) fn rclone実行ファイルの存在を確かめる(場所: &Rclone実行ファイルの場所) -> Result<(), 初期化エラー> {
+    let Rclone実行ファイルの場所::明示された場所(パス) = 場所 else { return Ok(()) };
+    if パス.is_file() {
+        return Ok(());
+    }
+    Err(初期化エラー::Rclone実行ファイル不在 {
+        説明: "PC設定のrclone_executableが指す実行ファイルが見つかりません。PC設定を確認してください。".to_owned(),
+    })
+}
+
+/// ダミーの識別子で`存在を確認する`を1回呼び、rcloneが実際に起動・応答できることを確かめる。
+/// 対象の識別子が存在するかどうかは問わない（未存在も正常応答として扱う）。
+pub(crate) fn rcloneの起動を確認する(保管庫: &Rclone保管庫) -> Result<(), 保管エラー> {
+    let 識別子 = オブジェクト識別子::生成する(&"0".repeat(識別子の文字数))?;
+    保管庫.存在を確認する(&識別子, 期待バイト数::生成する(0))?;
+    Ok(())
+}

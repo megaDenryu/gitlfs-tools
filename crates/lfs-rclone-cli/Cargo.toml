@@ -16,6 +16,11 @@ lfs-rclone-rclone.workspace = true
 lfs-rclone-protocol.workspace = true
 thiserror.workspace = true
 
+[dev-dependencies]
+serde_json.workspace = true
+sha2.workspace = true
+tempfile.workspace = true
+
 [lints]
 workspace = true
 

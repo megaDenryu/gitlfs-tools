@@ -200,6 +200,9 @@ dependencies = [
  "lfs-rclone-rclone",
  "lfs-rclone-storage-port",
  "lfs-rclone-transfer",
+ "serde_json",
+ "sha2",
+ "tempfile",
  "thiserror",
 ]
 
