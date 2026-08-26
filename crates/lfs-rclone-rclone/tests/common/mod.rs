@@ -12,6 +12,8 @@
 
 #![allow(dead_code)]
 
+pub mod rclone_executable;
+
 use std::ffi::OsStr;
 use std::fs;
 use std::path::PathBuf;

@@ -1,6 +1,7 @@
 //! upload: 成功(新規)、AlreadyPresent、整合性失敗、失敗後の継続、進捗の最終値を確かめる。
-//! 実rcloneが必要なため、`LFS_RCLONE_TEST_EXECUTABLE`が無ければ読み飛ばす
-//! （`lfs-rclone-rclone`の結合テストと同じ方針）。
+//! 実rcloneが必要なため、PATHまたは`LFS_RCLONE_TEST_EXECUTABLE`から実行ファイルを解決する。
+//! 解決できなければ、`LFS_RCLONE_SKIP_INTEGRATION`が設定されている場合に限り読み飛ばし、
+//! それ以外は失敗させる（`common::rclone_executable`参照）。
 
 mod common;
 
@@ -10,9 +11,13 @@ use serde_json::json;
 
 #[test]
 fn uploadの成功既存整合性失敗と失敗後の継続を確かめる() -> Result<(), Box<dyn std::error::Error>> {
-    let Some(rclone実行ファイル) = common::fixtures::rclone実行ファイルのパスを探す() else {
-        eprintln!("LFS_RCLONE_TEST_EXECUTABLE が未設定のため、結合テストを読み飛ばします。");
-        return Ok(());
+    let rclone実行ファイル = match common::rclone_executable::実行ファイルを解決する()? {
+        common::rclone_executable::実行ファイル解決::明示された場所(パス) => Some(パス),
+        common::rclone_executable::実行ファイル解決::PATH解決 => None,
+        common::rclone_executable::実行ファイル解決::読み飛ばす => {
+            eprintln!("LFS_RCLONE_SKIP_INTEGRATION が設定されているため、結合テストを読み飛ばします。");
+            return Ok(());
+        }
     };
 
     let 保管先ルート = tempfile::tempdir()?;
@@ -20,7 +25,7 @@ fn uploadの成功既存整合性失敗と失敗後の継続を確かめる() ->
     let 一時ディレクトリ = tempfile::tempdir()?;
     let 作業ツリー = common::fixtures::プロジェクト作業ツリーを作る("upload-roundtrip")?;
     let pc設定 =
-        common::fixtures::pc設定ディレクトリを作る("upload-roundtrip", &ドライブ, &残り, 一時ディレクトリ.path(), Some(&rclone実行ファイル))?;
+        common::fixtures::pc設定ディレクトリを作る("upload-roundtrip", &ドライブ, &残り, 一時ディレクトリ.path(), rclone実行ファイル.as_deref())?;
     let (アップロード元, oid, size) =
         common::payload::アップロード元を作る(作業ツリー.path(), "payload.bin", b"upload roundtrip test payload")?;
 

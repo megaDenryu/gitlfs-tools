@@ -10,3 +10,4 @@
 pub mod fixtures;
 pub mod payload;
 pub mod process;
+pub mod rclone_executable;

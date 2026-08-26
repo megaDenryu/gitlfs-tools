@@ -3,18 +3,11 @@
 //! （CLAUDE.md「実ユーザーの設定ディレクトリを読み書きするテストを書いてはならない」）。
 
 use std::fs;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 
 use tempfile::TempDir;
 
 pub const 実行ファイルのパス: &str = env!("CARGO_BIN_EXE_git-lfs-rclone-storage");
-
-/// `LFS_RCLONE_TEST_EXECUTABLE`が指す実rcloneのパス。未設定または実在しなければ`None`。
-pub fn rclone実行ファイルのパスを探す() -> Option<PathBuf> {
-    let パス = std::env::var("LFS_RCLONE_TEST_EXECUTABLE").ok()?;
-    let パス = PathBuf::from(パス);
-    パス.is_file().then_some(パス)
-}
 
 /// 絶対パスをドライブ文字とrclone local backend用の残りパスへ分ける
 /// （`lfs-rclone-rclone`のlocal backend結合テストと同じ手法）。

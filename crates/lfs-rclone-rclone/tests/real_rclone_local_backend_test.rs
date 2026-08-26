@@ -1,10 +1,10 @@
 //! 実rcloneプロセスとの結合テスト。資格情報が不要なrcloneのlocal backendへ、
 //! アップロード→存在確認→ダウンロードを実際に往復させる。
 //!
-//! 実行ファイルの場所は環境変数`LFS_RCLONE_TEST_EXECUTABLE`で受け取る。未設定、または
-//! 指すファイルが存在しなければ、テストを失敗させずに読み飛ばした旨を標準エラー出力へ
-//! 書いて成功扱いで終える（実rcloneが入っていない環境でも`cargo xtask verify`が
-//! 通るようにするため）。
+//! 実行ファイルはPATHから解決するか、環境変数`LFS_RCLONE_TEST_EXECUTABLE`で明示する
+//! （`common::rclone_executable`参照）。どちらも解決できなければ、
+//! `LFS_RCLONE_SKIP_INTEGRATION`が設定されている場合に限り読み飛ばし、それ以外は失敗させる。
+//! 黙って読み飛ばして`cargo xtask verify`を通すことはしない。
 //!
 //! 注意: named remoteやrclone設定ファイルを一切使わない。一時ディレクトリの絶対パスを
 //! `<ドライブ文字>:<残りのパス(/区切り)>`へ分解し、ドライブ文字をそのまま`Rcloneリモート名`
@@ -15,7 +15,7 @@
 mod common;
 
 use std::io::Write;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::time::Duration;
 
 use lfs_rclone_domain::{
@@ -26,12 +26,6 @@ use lfs_rclone_rclone::Rclone保管庫;
 use lfs_rclone_storage_port::{アップロード結果, オブジェクト保管庫};
 use sha2::{Digest, Sha256};
 
-fn rclone実行ファイルのパスを探す() -> Option<PathBuf> {
-    let パス = std::env::var("LFS_RCLONE_TEST_EXECUTABLE").ok()?;
-    let パス = PathBuf::from(パス);
-    パス.is_file().then_some(パス)
-}
-
 fn ドライブとパスへ分ける(絶対パス: &Path) -> Result<(String, String), Box<dyn std::error::Error>> {
     let 文字列 = 絶対パス.to_str().ok_or("一時ディレクトリのパスがUTF-8ではありません")?;
     let 正規化 = 文字列.replace('\\', "/");
@@ -41,17 +35,20 @@ fn ドライブとパスへ分ける(絶対パス: &Path) -> Result<(String, Str
 
 #[test]
 fn 実rcloneのlocal_backendでアップロードから存在確認ダウンロードまで往復する() -> Result<(), Box<dyn std::error::Error>> {
-    let Some(実行ファイルパス) = rclone実行ファイルのパスを探す() else {
-        eprintln!(
-            "LFS_RCLONE_TEST_EXECUTABLE が未設定、または指すファイルが見つからないため、実rcloneとの結合テストを読み飛ばします。"
-        );
-        return Ok(());
+    let 実行ファイル = match common::rclone_executable::実行ファイルを解決する()? {
+        common::rclone_executable::実行ファイル解決::明示された場所(パス) => {
+            Rclone実行ファイルの場所::指定パスから生成する(パス)
+        }
+        common::rclone_executable::実行ファイル解決::PATH解決 => Rclone実行ファイルの場所::解決を環境変数に委ねる(),
+        common::rclone_executable::実行ファイル解決::読み飛ばす => {
+            eprintln!("LFS_RCLONE_SKIP_INTEGRATION が設定されているため、実rcloneとの結合テストを読み飛ばします。");
+            return Ok(());
+        }
     };
 
     let 保管先ルート = tempfile::tempdir()?;
     let (ドライブ, 残り) = ドライブとパスへ分ける(保管先ルート.path())?;
 
-    let 実行ファイル = Rclone実行ファイルの場所::指定パスから生成する(実行ファイルパス.clone());
     let リモート名 = Rcloneリモート名::生成する(ドライブ)?;
     let 基底パス = 保管先基底パス::生成する(残り)?;
     let 作業ディレクトリ = tempfile::tempdir()?;
@@ -89,11 +86,7 @@ fn 実rcloneのlocal_backendでアップロードから存在確認ダウンロ�
     let ダウンロードした内容 = std::fs::read(ダウンロード先.パス())?;
     assert_eq!(ダウンロードした内容, 内容);
 
-    eprintln!(
-        "実rcloneのlocal backendでの往復に成功しました: 実行ファイル={}, 保管先ルート={}",
-        実行ファイルパス.display(),
-        保管先ルート.path().display()
-    );
+    eprintln!("実rcloneのlocal backendでの往復に成功しました: 保管先ルート={}", 保管先ルート.path().display());
 
     Ok(())
 }
