@@ -5,7 +5,7 @@
 
 use std::process::Command;
 
-use crate::コマンド定義::サブコマンド;
+use crate::command_registry::サブコマンド;
 
 pub struct 検証コマンド;
 

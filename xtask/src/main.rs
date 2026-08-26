@@ -1,18 +1,13 @@
 //! リポジトリ内ツールの唯一の入口。
 //!
 //! 外部依存を持たない（std のみ）。起動が重くなるとツールとして使われなくなるためである。
-//!
-//! 注意: 日本語のファイル名を持つモジュールは `#[path]` で綴りを明示しないとコンパイルできない
-//! （rustc E0754）。日本語ファイル名を追加するときは同じ形で書く。
 
-#[path = "コマンド定義.rs"]
-mod コマンド定義;
-#[path = "検証コマンド.rs"]
-mod 検証コマンド;
+mod command_registry;
+mod verify_command;
 
 use std::process::ExitCode;
 
-use コマンド定義::サブコマンド登録簿;
+use command_registry::サブコマンド登録簿;
 
 fn main() -> ExitCode {
     let 登録簿 = サブコマンド登録簿::既定();
