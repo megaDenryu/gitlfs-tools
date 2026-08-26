@@ -4,6 +4,11 @@
 //! PATHまたは`LFS_RCLONE_TEST_EXECUTABLE`から実行ファイルを解決する。解決できなければ、
 //! `LFS_RCLONE_SKIP_INTEGRATION`が設定されている場合に限り読み飛ばし、それ以外は失敗させる
 //! （`common::rclone_executable`参照）。
+//! 4つめ（実行ファイルパスが不正）はPC設定`rclone_executable`が指すファイルが実在しない
+//! ため、起動確認そのものが失敗する経路であり、実rcloneが無くても実行できる。
+//! PATH解決の側（PATH上にrcloneが無い場合）は、`std::env::set_var`がedition 2024で
+//! `unsafe fn`になり本ワークスペースの`unsafe_code = "forbid"`と両立しないため、
+//! PATHを安全に操作する手段が無く実測できない。
 
 mod common;
 
@@ -76,6 +81,33 @@ fn 存在しないリモート名でinitに失敗しコード10を返す() -> Re
     let 応答 = プロセス.一行受け取る()?;
     let コード = 応答["error"]["code"].as_u64();
     assert_eq!(コード, Some(10), "存在しないリモート名はコード10（認証接続失敗）になるべき: {応答:?}");
+
+    let (終了状態, _) = プロセス.終了を待って後始末する()?;
+    assert!(!終了状態.success());
+    Ok(())
+}
+
+#[test]
+fn 実行ファイルパスが不正でinitに失敗しコード10以外を返す() -> Result<(), Box<dyn std::error::Error>> {
+    let 一時ディレクトリ = tempfile::tempdir()?;
+    let 作業ツリー = common::fixtures::プロジェクト作業ツリーを作る("bad-executable")?;
+    let 存在しない実行ファイル = 一時ディレクトリ.path().join("no-such-rclone-executable");
+    let pc設定 = common::fixtures::pc設定ディレクトリを作る(
+        "bad-executable",
+        "dummyremote",
+        "dummy",
+        一時ディレクトリ.path(),
+        Some(存在しない実行ファイル.as_path()),
+    )?;
+
+    let mut プロセス =
+        common::process::プロトコルテストプロセス::起動する(Path::new(common::fixtures::実行ファイルのパス), 作業ツリー.path(), pc設定.path())?;
+    プロセス.一行送る(&serde_json::json!({"event": "init", "operation": "upload", "remote": "origin"}))?;
+
+    let 応答 = プロセス.一行受け取る()?;
+    let コード = 応答["error"]["code"].as_u64();
+    assert_ne!(コード, Some(10), "起動できない実行ファイルはコード10（認証接続失敗）ではないはず: {応答:?}");
+    assert_eq!(コード, Some(8), "起動できない実行ファイルはコード8（rclone実行ファイル不在）になるべき: {応答:?}");
 
     let (終了状態, _) = プロセス.終了を待って後始末する()?;
     assert!(!終了状態.success());

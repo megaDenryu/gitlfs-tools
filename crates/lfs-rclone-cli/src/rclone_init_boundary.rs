@@ -10,7 +10,7 @@ use lfs_rclone_rclone::Rclone保管庫;
 use lfs_rclone_transfer::資産転送サービス;
 
 use crate::config_error_mapping::設定エラーへ変換する;
-use crate::rclone_startup_check::{rclone実行ファイルの存在を確かめる, rcloneの起動を確認する};
+use crate::rclone_startup_check::{rclone実行ファイルの起動可否を確かめる, rcloneの起動を確認する};
 use crate::rclone_transfer_session::Rclone転送セッション;
 use crate::temp_directory_provisioning::一時保存先を作成する;
 
@@ -38,7 +38,7 @@ impl 転送セッション開始境界 for Rclone初期化境界 {
         let pc設定 = self.pc設定の場所.読み込む().map_err(設定エラーへ変換する)?;
         let プロファイル = pc設定.プロファイルを解決する(プロジェクト設定.プロファイル()).map_err(設定エラーへ変換する)?;
 
-        rclone実行ファイルの存在を確かめる(プロファイル.rclone実行ファイル())?;
+        rclone実行ファイルの起動可否を確かめる(プロファイル.rclone実行ファイル())?;
 
         let 一時ディレクトリ = プロファイル.一時ディレクトリ().clone();
         一時保存先を作成する(&一時ディレクトリ)?;
