@@ -17,8 +17,8 @@ use std::fs;
 use std::path::PathBuf;
 use std::time::Duration;
 
-use lfs_rclone_domain::{一時ディレクトリ, 保管先基底パス, Rcloneリモート名, 転送タイムアウト};
-use lfs_rclone_rclone::{Rclone実行ファイル, Rclone保管庫};
+use lfs_rclone_domain::{一時ディレクトリ, 保管先基底パス, Rclone実行ファイルの場所, Rcloneリモート名, 転送タイムアウト};
+use lfs_rclone_rclone::Rclone保管庫;
 
 const 指示置き場の親: &str = "git_lfs_rclone_storage_fake_rclone_test";
 
@@ -96,7 +96,7 @@ impl 偽rclone指示置き場 {
 
 /// 偽rclone実行ファイルを指すよう組み立てた`Rclone保管庫`。
 pub fn 偽rclone保管庫を作る(基底パス文字列: &str, タイムアウト: Duration) -> Result<Rclone保管庫, Box<dyn std::error::Error>> {
-    let 実行ファイル = Rclone実行ファイル::指定パスから生成する(偽rclone実行ファイルのパス());
+    let 実行ファイル = Rclone実行ファイルの場所::指定パスから生成する(偽rclone実行ファイルのパス());
     let リモート名 = Rcloneリモート名::生成する("fakeremote")?;
     let 基底パス = 保管先基底パス::生成する(基底パス文字列)?;
     let 一時ディレクトリ = 一時ディレクトリ::生成する(std::env::temp_dir());

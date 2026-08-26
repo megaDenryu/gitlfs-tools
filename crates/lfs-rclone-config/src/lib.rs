@@ -39,7 +39,6 @@ mod pc_profile;
 mod project_config;
 mod project_config_location;
 mod project_config_toml;
-mod rclone_executable_location;
 
 pub use config_error::設定エラー;
 pub use config_schema_version::設定スキーマ版;
@@ -48,4 +47,3 @@ pub use pc_config_location::PC設定の場所;
 pub use pc_profile::PCプロファイル;
 pub use project_config::プロジェクト設定;
 pub use project_config_location::プロジェクト設定の場所;
-pub use rclone_executable_location::Rclone実行ファイルの場所;

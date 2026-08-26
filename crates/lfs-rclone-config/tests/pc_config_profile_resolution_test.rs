@@ -5,8 +5,8 @@ mod common;
 
 use std::path::PathBuf;
 
-use lfs_rclone_config::{PC設定の場所, Rclone実行ファイルの場所, 設定エラー};
-use lfs_rclone_domain::プロファイル名;
+use lfs_rclone_config::{PC設定の場所, 設定エラー};
+use lfs_rclone_domain::{Rclone実行ファイルの場所, プロファイル名};
 
 use common::pc設定ディレクトリを作る;
 

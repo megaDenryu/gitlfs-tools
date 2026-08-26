@@ -19,9 +19,10 @@ use std::path::{Path, PathBuf};
 use std::time::Duration;
 
 use lfs_rclone_domain::{
-    一時ディレクトリ, オブジェクト状態, オブジェクト識別子, 保管先基底パス, 期待バイト数, Rcloneリモート名, 転送タイムアウト, 検証前のローカルファイル,
+    一時ディレクトリ, オブジェクト状態, オブジェクト識別子, 保管先基底パス, 期待バイト数, Rclone実行ファイルの場所, Rcloneリモート名,
+    転送タイムアウト, 検証前のローカルファイル,
 };
-use lfs_rclone_rclone::{Rclone実行ファイル, Rclone保管庫};
+use lfs_rclone_rclone::Rclone保管庫;
 use lfs_rclone_storage_port::{アップロード結果, オブジェクト保管庫};
 use sha2::{Digest, Sha256};
 
@@ -50,7 +51,7 @@ fn 実rcloneのlocal_backendでアップロードから存在確認ダウンロ�
     let 保管先ルート = tempfile::tempdir()?;
     let (ドライブ, 残り) = ドライブとパスへ分ける(保管先ルート.path())?;
 
-    let 実行ファイル = Rclone実行ファイル::指定パスから生成する(実行ファイルパス.clone());
+    let 実行ファイル = Rclone実行ファイルの場所::指定パスから生成する(実行ファイルパス.clone());
     let リモート名 = Rcloneリモート名::生成する(ドライブ)?;
     let 基底パス = 保管先基底パス::生成する(残り)?;
     let 作業ディレクトリ = tempfile::tempdir()?;

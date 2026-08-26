@@ -4,14 +4,13 @@
 
 use lfs_rclone_domain::{
     一時ディレクトリ, 一時ファイルパス, オブジェクト状態, オブジェクト識別子, 保管エラー, 保管先基底パス, 整合性エラー, 期待バイト数,
-    Rcloneリモート名, 検証済みローカルファイル, 転送タイムアウト,
+    Rclone実行ファイルの場所, Rcloneリモート名, 検証済みローカルファイル, 転送タイムアウト,
 };
 use lfs_rclone_storage_port::{アップロード結果, オブジェクト保管庫};
 
 use crate::download_transfer;
 use crate::existence_query;
 use crate::finalize_transfer;
-use crate::rclone_executable::Rclone実行ファイル;
 use crate::rclone_process_runner::Rcloneプロセス実行器;
 use crate::upload_transfer;
 
@@ -26,7 +25,7 @@ pub struct Rclone保管庫 {
 
 impl Rclone保管庫 {
     pub fn 生成する(
-        実行ファイル: Rclone実行ファイル,
+        実行ファイル: Rclone実行ファイルの場所,
         リモート名: Rcloneリモート名,
         基底パス: 保管先基底パス,
         一時ディレクトリ: 一時ディレクトリ,

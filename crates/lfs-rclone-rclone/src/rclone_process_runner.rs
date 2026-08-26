@@ -11,13 +11,12 @@
 
 use std::ffi::OsString;
 use std::io::Read;
-use std::process::{Child, Stdio};
+use std::process::{Child, Command, Stdio};
 use std::thread;
 use std::time::{Duration, Instant};
 
-use lfs_rclone_domain::転送タイムアウト;
+use lfs_rclone_domain::{Rclone実行ファイルの場所, 転送タイムアウト};
 
-use crate::rclone_executable::Rclone実行ファイル;
 use crate::rclone_execution_error::Rclone実行エラー;
 use crate::rclone_operation::Rclone操作;
 
@@ -25,21 +24,19 @@ const 監視間隔: Duration = Duration::from_millis(20);
 
 /// 実行ファイルの指定とタイムアウトを保持し、rcloneの起動を行うサービス。
 pub(crate) struct Rcloneプロセス実行器 {
-    実行ファイル: Rclone実行ファイル,
+    実行ファイル: Rclone実行ファイルの場所,
     タイムアウト: 転送タイムアウト,
 }
 
 impl Rcloneプロセス実行器 {
-    pub(crate) fn 生成する(実行ファイル: Rclone実行ファイル, タイムアウト: 転送タイムアウト) -> Self {
+    pub(crate) fn 生成する(実行ファイル: Rclone実行ファイルの場所, タイムアウト: 転送タイムアウト) -> Self {
         Self { 実行ファイル, タイムアウト }
     }
 
     /// 指定した引数でrcloneを起動し、標準出力を待ち切って返す。標準エラー出力は捕捉して
     /// 読み切るが、秘密情報の混入を避けるため戻り値にも診断メッセージにも含めない。
     pub(crate) fn 実行する(&self, 操作: Rclone操作, 引数: &[OsString]) -> Result<Vec<u8>, Rclone実行エラー> {
-        let mut 子プロセス = self
-            .実行ファイル
-            .コマンドを生成する()
+        let mut 子プロセス = Command::new(self.実行ファイル.プログラム名())
             .args(引数)
             .stdin(Stdio::null())
             .stdout(Stdio::piped())
