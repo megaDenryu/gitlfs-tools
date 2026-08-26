@@ -20,7 +20,7 @@ mod storage_object_path;
 mod temp_directory;
 mod temp_file_path;
 mod unique_identifier;
-mod verified_source;
+mod verified_local_file;
 
 pub use expected_byte_count::期待バイト数;
 pub use integrity_error::整合性エラー;
@@ -34,4 +34,4 @@ pub use storage_error::保管エラー;
 pub use storage_object_path::保管先オブジェクトパス;
 pub use temp_directory::一時ディレクトリ;
 pub use temp_file_path::一時ファイルパス;
-pub use verified_source::検証済み転送元;
+pub use verified_local_file::検証済みローカルファイル;

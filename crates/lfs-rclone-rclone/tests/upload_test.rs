@@ -6,13 +6,13 @@ mod common;
 use std::io::Write;
 use std::time::Duration;
 
-use lfs_rclone_domain::{オブジェクト識別子, 期待バイト数, 検証前のローカルファイル, 検証済み転送元};
+use lfs_rclone_domain::{オブジェクト識別子, 期待バイト数, 検証前のローカルファイル, 検証済みローカルファイル};
 use lfs_rclone_storage_port::{アップロード結果, オブジェクト保管庫};
 use sha2::{Digest, Sha256};
 
-fn 内容を書いた検証済み転送元を作る(
+fn 内容を書いた検証済みローカルファイルを作る(
     内容: &[u8],
-) -> Result<(tempfile::NamedTempFile, オブジェクト識別子, 検証済み転送元), Box<dyn std::error::Error>> {
+) -> Result<(tempfile::NamedTempFile, オブジェクト識別子, 検証済みローカルファイル), Box<dyn std::error::Error>> {
     let mut ファイル = tempfile::NamedTempFile::new()?;
     ファイル.write_all(内容)?;
 
@@ -32,7 +32,7 @@ fn 未存在なら一時パスを経由して最終パスへ置く() -> Result<(
     let 基底パス = common::固有の基底パス文字列を作る("upload-fresh")?;
     let 指示 = common::偽rclone指示置き場::準備する(&基底パス)?;
     let 保管庫 = common::偽rclone保管庫を作る(&基底パス, Duration::from_secs(5))?;
-    let (_ファイル, 識別子, 検証済み) = 内容を書いた検証済み転送元を作る(b"issue5 upload fixture")?;
+    let (_ファイル, 識別子, 検証済み) = 内容を書いた検証済みローカルファイルを作る(b"issue5 upload fixture")?;
     指示.最終化後のバイト数を仕込む(検証済み.バイト数().値())?;
 
     let 結果 = 保管庫.アップロードする(&識別子, &検証済み)?;
@@ -58,7 +58,7 @@ fn 未存在なら一時パスを経由して最終パスへ置く() -> Result<(
 fn 既に同じサイズで存在すれば転送せず既存を返す() -> Result<(), Box<dyn std::error::Error>> {
     let 基底パス = common::固有の基底パス文字列を作る("upload-already")?;
     let 指示 = common::偽rclone指示置き場::準備する(&基底パス)?;
-    let (_ファイル, 識別子, 検証済み) = 内容を書いた検証済み転送元を作る(b"issue5 already present fixture")?;
+    let (_ファイル, 識別子, 検証済み) = 内容を書いた検証済みローカルファイルを作る(b"issue5 already present fixture")?;
     指示.既存として仕込む(検証済み.バイト数().値())?;
     let 保管庫 = common::偽rclone保管庫を作る(&基底パス, Duration::from_secs(5))?;
 
@@ -77,7 +77,7 @@ fn 既に同じサイズで存在すれば転送せず既存を返す() -> Resul
 fn 既に違うサイズで存在すれば整合性エラーで転送しない() -> Result<(), Box<dyn std::error::Error>> {
     let 基底パス = common::固有の基底パス文字列を作る("upload-corrupt")?;
     let 指示 = common::偽rclone指示置き場::準備する(&基底パス)?;
-    let (_ファイル, 識別子, 検証済み) = 内容を書いた検証済み転送元を作る(b"issue5 corrupt existing fixture")?;
+    let (_ファイル, 識別子, 検証済み) = 内容を書いた検証済みローカルファイルを作る(b"issue5 corrupt existing fixture")?;
     指示.既存として仕込む(検証済み.バイト数().値() + 1)?;
     let 保管庫 = common::偽rclone保管庫を作る(&基底パス, Duration::from_secs(5))?;
 
