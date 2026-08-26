@@ -17,8 +17,8 @@ use std::fs;
 use std::path::PathBuf;
 use std::time::Duration;
 
-use lfs_rclone_domain::{一時ディレクトリ, 保管先基底パス, Rcloneリモート名};
-use lfs_rclone_rclone::{Rclone実行ファイル, Rclone保管庫, 転送タイムアウト};
+use lfs_rclone_domain::{一時ディレクトリ, 保管先基底パス, Rcloneリモート名, 転送タイムアウト};
+use lfs_rclone_rclone::{Rclone実行ファイル, Rclone保管庫};
 
 const 指示置き場の親: &str = "git_lfs_rclone_storage_fake_rclone_test";
 

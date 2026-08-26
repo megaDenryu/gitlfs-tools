@@ -4,7 +4,7 @@
 
 use lfs_rclone_domain::{
     一時ディレクトリ, 一時ファイルパス, オブジェクト状態, オブジェクト識別子, 保管エラー, 保管先基底パス, 整合性エラー, 期待バイト数,
-    Rcloneリモート名, 検証済みローカルファイル,
+    Rcloneリモート名, 検証済みローカルファイル, 転送タイムアウト,
 };
 use lfs_rclone_storage_port::{アップロード結果, オブジェクト保管庫};
 
@@ -13,7 +13,6 @@ use crate::existence_query;
 use crate::finalize_transfer;
 use crate::rclone_executable::Rclone実行ファイル;
 use crate::rclone_process_runner::Rcloneプロセス実行器;
-use crate::transfer_timeout::転送タイムアウト;
 use crate::upload_transfer;
 
 /// rcloneを子プロセスとして起動する保管庫。実行ファイル・リモート名・保管先基底パス・

@@ -7,6 +7,17 @@ license.workspace = true
 repository.workspace = true
 publish = false
 
+[features]
+# テスト専用の偽rclone実行ファイル（`src/bin/fake_rclone.rs`）を有効にする機能。既定は無効。
+# `cargo build --workspace`のような通常のビルドで製品の実行ファイルと並んで
+# `fake_rclone.exe`が生成されるのを防ぐ。結合テストはこの機能を有効にした状態でのみ通る。
+test-support = []
+
+[[bin]]
+name = "fake_rclone"
+path = "src/bin/fake_rclone.rs"
+required-features = ["test-support"]
+
 [dependencies]
 lfs-rclone-domain.workspace = true
 lfs-rclone-storage-port.workspace = true

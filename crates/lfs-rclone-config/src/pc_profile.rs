@@ -1,11 +1,18 @@
 //! 論理プロファイル名を解決した先のPCプロファイルを表すドメインモデル。
 
-use lfs_rclone_domain::{Rcloneリモート名, 一時ディレクトリ, 保管先基底パス};
+use std::time::Duration;
+
+use lfs_rclone_domain::{Rcloneリモート名, 一時ディレクトリ, 保管先基底パス, 転送タイムアウト};
 
 use crate::config_error::設定エラー;
 use crate::pc_config_toml::PCプロファイルTOML表現;
 use crate::rclone_executable_location::Rclone実行ファイルの場所;
-use crate::transfer_timeout::転送タイムアウト;
+
+/// TOMLの`transfer_timeout_seconds`（秒数）から`転送タイムアウト`を組み立てる。
+/// TOML固有のフィールド形式（生の秒数）を扱うため、domain層でなくこの層に置く。
+fn 秒数から転送タイムアウトを生成する(秒数: u64) -> 転送タイムアウト {
+    転送タイムアウト::生成する(Duration::from_secs(秒数))
+}
 
 /// PC設定の1プロファイルを解決した値。`lfs-rclone-rclone`（#5）と`lfs-rclone-protocol`
 /// （#7）がそのまま受け取れる、名前のある型である。この層はrcloneを起動しない。
@@ -27,7 +34,7 @@ impl PCプロファイル {
         let rcloneリモート = Rcloneリモート名::生成する(表現.rclone_remote).map_err(設定不備として変換する)?;
         let 基底パス = 保管先基底パス::生成する(表現.base_path).map_err(設定不備として変換する)?;
         let 一時ディレクトリ = 一時ディレクトリ::生成する(表現.temp_directory);
-        let 転送タイムアウト = 転送タイムアウト::秒数から生成する(表現.transfer_timeout_seconds);
+        let 転送タイムアウト = 秒数から転送タイムアウトを生成する(表現.transfer_timeout_seconds);
         let rclone実行ファイル = Rclone実行ファイルの場所::生成する(表現.rclone_executable);
 
         Ok(Self {

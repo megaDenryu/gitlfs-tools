@@ -13,9 +13,7 @@ mod rclone_execution_error;
 mod rclone_object_storage;
 mod rclone_operation;
 mod rclone_process_runner;
-mod transfer_timeout;
 mod upload_transfer;
 
 pub use rclone_executable::Rclone実行ファイル;
 pub use rclone_object_storage::Rclone保管庫;
-pub use transfer_timeout::転送タイムアウト;

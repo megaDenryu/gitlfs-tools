@@ -15,10 +15,11 @@ use std::process::{Child, Stdio};
 use std::thread;
 use std::time::{Duration, Instant};
 
+use lfs_rclone_domain::転送タイムアウト;
+
 use crate::rclone_executable::Rclone実行ファイル;
 use crate::rclone_execution_error::Rclone実行エラー;
 use crate::rclone_operation::Rclone操作;
-use crate::transfer_timeout::転送タイムアウト;
 
 const 監視間隔: Duration = Duration::from_millis(20);
 

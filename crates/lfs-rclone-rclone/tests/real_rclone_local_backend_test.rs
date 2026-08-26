@@ -19,9 +19,9 @@ use std::path::{Path, PathBuf};
 use std::time::Duration;
 
 use lfs_rclone_domain::{
-    一時ディレクトリ, オブジェクト状態, オブジェクト識別子, 保管先基底パス, 期待バイト数, Rcloneリモート名, 検証前のローカルファイル,
+    一時ディレクトリ, オブジェクト状態, オブジェクト識別子, 保管先基底パス, 期待バイト数, Rcloneリモート名, 転送タイムアウト, 検証前のローカルファイル,
 };
-use lfs_rclone_rclone::{Rclone実行ファイル, Rclone保管庫, 転送タイムアウト};
+use lfs_rclone_rclone::{Rclone実行ファイル, Rclone保管庫};
 use lfs_rclone_storage_port::{アップロード結果, オブジェクト保管庫};
 use sha2::{Digest, Sha256};
 

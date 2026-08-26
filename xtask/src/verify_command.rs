@@ -19,13 +19,30 @@ impl サブコマンド for 検証コマンド {
     }
 
     fn 実行する(&self, _引数: &[String]) -> Result<(), String> {
+        // 前提: `lfs-rclone-rclone/test-support`はテスト専用の偽rclone実行ファイル
+        // （`fake_rclone`）を有効にする機能である。既定は無効であり、無効のままだと
+        // `target/debug/fake_rclone.exe`が製品の実行ファイルと並んで生成されてしまう。
+        // 有効化しないと`fake_rclone`を使う結合テストがコンパイルできないため、
+        // 3工程すべてで一貫して有効化する。
         let 工程一覧: [(&str, &[&str]); 3] = [
-            ("型検査", &["check", "--workspace", "--all-targets"]),
+            (
+                "型検査",
+                &["check", "--workspace", "--all-targets", "--features", "lfs-rclone-rclone/test-support"],
+            ),
             (
                 "lint検査",
-                &["clippy", "--workspace", "--all-targets", "--", "-D", "warnings"],
+                &[
+                    "clippy",
+                    "--workspace",
+                    "--all-targets",
+                    "--features",
+                    "lfs-rclone-rclone/test-support",
+                    "--",
+                    "-D",
+                    "warnings",
+                ],
             ),
-            ("テスト", &["test", "--workspace"]),
+            ("テスト", &["test", "--workspace", "--features", "lfs-rclone-rclone/test-support"]),
         ];
 
         for (工程名, cargo引数) in 工程一覧 {

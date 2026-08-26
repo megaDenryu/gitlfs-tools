@@ -19,6 +19,7 @@ mod storage_error;
 mod storage_object_path;
 mod temp_directory;
 mod temp_file_path;
+mod transfer_timeout;
 mod unique_identifier;
 mod verified_local_file;
 
@@ -34,4 +35,5 @@ pub use storage_error::保管エラー;
 pub use storage_object_path::保管先オブジェクトパス;
 pub use temp_directory::一時ディレクトリ;
 pub use temp_file_path::一時ファイルパス;
+pub use transfer_timeout::転送タイムアウト;
 pub use verified_local_file::検証済みローカルファイル;

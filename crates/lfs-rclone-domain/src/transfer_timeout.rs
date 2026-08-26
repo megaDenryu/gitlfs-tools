@@ -12,7 +12,7 @@ impl 転送タイムアウト {
         Self(上限時間)
     }
 
-    pub(crate) fn 値(&self) -> Duration {
+    pub fn 値(&self) -> Duration {
         self.0
     }
 }

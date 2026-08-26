@@ -6,8 +6,10 @@ mod common;
 
 use std::time::{Duration, Instant};
 
-use lfs_rclone_domain::{一時ディレクトリ, オブジェクト状態, オブジェクト識別子, 保管エラー, 保管先基底パス, 期待バイト数, Rcloneリモート名};
-use lfs_rclone_rclone::{Rclone実行ファイル, Rclone保管庫, 転送タイムアウト};
+use lfs_rclone_domain::{
+    一時ディレクトリ, オブジェクト状態, オブジェクト識別子, 保管エラー, 保管先基底パス, 期待バイト数, Rcloneリモート名, 転送タイムアウト,
+};
+use lfs_rclone_rclone::{Rclone実行ファイル, Rclone保管庫};
 use lfs_rclone_storage_port::オブジェクト保管庫;
 
 fn ダミー識別子() -> Result<オブジェクト識別子, Box<dyn std::error::Error>> {

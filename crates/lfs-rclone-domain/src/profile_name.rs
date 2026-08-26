@@ -3,7 +3,7 @@
 use crate::storage_error::保管エラー;
 
 /// プロジェクトが参照する論理プロファイル名。空文字は許容しない。
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 #[repr(transparent)]
 pub struct プロファイル名(String);
 
