@@ -1,0 +1,16 @@
+[package]
+name = "lfs-rclone-transfer"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+publish = false
+
+[dependencies]
+lfs-rclone-domain.workspace = true
+lfs-rclone-storage-port.workspace = true
+thiserror.workspace = true
+
+[lints]
+workspace = true

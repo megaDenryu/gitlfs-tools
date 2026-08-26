@@ -1,0 +1,47 @@
+[workspace]
+resolver = "3"
+members = [
+    "crates/lfs-rclone-domain",
+    "crates/lfs-rclone-storage-port",
+    "crates/lfs-rclone-config",
+    "crates/lfs-rclone-transfer",
+    "crates/lfs-rclone-rclone",
+    "crates/lfs-rclone-protocol",
+    "crates/lfs-rclone-cli",
+    "xtask",
+]
+
+[workspace.package]
+edition = "2024"
+rust-version = "1.94"
+license = "MIT"
+repository = "https://github.com/megaDenryu/git-lfs-rclone-storage"
+
+[workspace.dependencies]
+lfs-rclone-domain = { path = "crates/lfs-rclone-domain" }
+lfs-rclone-storage-port = { path = "crates/lfs-rclone-storage-port" }
+lfs-rclone-config = { path = "crates/lfs-rclone-config" }
+lfs-rclone-transfer = { path = "crates/lfs-rclone-transfer" }
+lfs-rclone-rclone = { path = "crates/lfs-rclone-rclone" }
+lfs-rclone-protocol = { path = "crates/lfs-rclone-protocol" }
+
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+toml = "0.9"
+sha2 = "0.10"
+uuid = { version = "1", features = ["v4"] }
+thiserror = "2"
+directories = "6"
+tempfile = "3"
+
+[workspace.lints.rust]
+unsafe_code = "forbid"
+
+[workspace.lints.clippy]
+unwrap_used = "deny"
+expect_used = "deny"
+as_conversions = "deny"
+panic = "deny"
+
+[profile.dev.package."*"]
+opt-level = 2

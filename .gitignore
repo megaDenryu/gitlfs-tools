@@ -1,0 +1,13 @@
+/target
+**/*.rs.bk
+
+# PCローカル設定と資格情報はGit管理対象にしない
+/.local/
+*.rclone.conf
+rclone.conf
+local-config.toml
+git-lfs-rclone-storage.toml
+
+# 試験生成物
+/test-output/
+/tmp/
