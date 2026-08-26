@@ -6,6 +6,7 @@
 use std::process::Command;
 
 use crate::command_registry::サブコマンド;
+use crate::line_count::行数検査コマンド;
 
 pub struct 検証コマンド;
 
@@ -19,6 +20,11 @@ impl サブコマンド for 検証コマンド {
     }
 
     fn 実行する(&self, _引数: &[String]) -> Result<(), String> {
+        eprintln!("== 行数検査: cargo xtask check-line-count ==");
+        行数検査コマンド
+            .実行する(&[])
+            .map_err(|失敗| format!("行数検査で失敗した。{失敗}"))?;
+
         // 前提: `lfs-rclone-rclone/test-support`はテスト専用の偽rclone実行ファイル
         // （`fake_rclone`）を有効にする機能である。既定は無効であり、無効のままだと
         // `target/debug/fake_rclone.exe`が製品の実行ファイルと並んで生成されてしまう。
