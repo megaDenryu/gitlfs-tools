@@ -3,6 +3,7 @@
 //! 新しい手順を作ったときは、シェルスクリプトを増やさずここへ登録する。引数なしで起動した
 //! ときの一覧表示が、後続セッションがツールを発見する唯一の手段である。
 
+use crate::acceptance_check::受入試験コマンド;
 use crate::line_count::行数検査コマンド;
 use crate::verify_command::検証コマンド;
 
@@ -20,7 +21,7 @@ pub struct サブコマンド登録簿 {
 impl サブコマンド登録簿 {
     pub fn 既定() -> Self {
         Self {
-            登録済み: vec![Box::new(検証コマンド), Box::new(行数検査コマンド)],
+            登録済み: vec![Box::new(検証コマンド), Box::new(行数検査コマンド), Box::new(受入試験コマンド)],
         }
     }
 

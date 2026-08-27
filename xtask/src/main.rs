@@ -2,6 +2,7 @@
 //!
 //! 外部依存を持たない（std のみ）。起動が重くなるとツールとして使われなくなるためである。
 
+mod acceptance_check;
 mod command_registry;
 mod line_count;
 mod verify_command;
