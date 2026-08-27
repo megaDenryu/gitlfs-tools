@@ -2,7 +2,7 @@
 //! 一時作業域を必ず片づけてから結果を報告する。
 
 use crate::acceptance_check::check_result::検査結果;
-use crate::acceptance_check::{report, scenario_chain_runner, scenario_check_7, scenario_check_8, scenario_check_9, scenario_setup};
+use crate::acceptance_check::{download_fails_on_missing_or_corrupt, report, restore_after_backend_replacement, scenario_chain_runner, scenario_setup, tracked_files_have_no_secrets};
 
 pub fn 実行する() -> Result<(), String> {
     let (作業域, mut 状態, 実行ファイル) = scenario_setup::組み立てる()?;
@@ -13,19 +13,19 @@ pub fn 実行する() -> Result<(), String> {
         7,
         "保管先の削除・破損でdownloadが明示的に失敗する",
         "削除・破損させたオブジェクトのdownloadは失敗し、working treeへ別の内容を置かない",
-        scenario_check_7::実行する(&作業域, &実行ファイル),
+        download_fails_on_missing_or_corrupt::実行する(&作業域, &実行ファイル),
     ));
     結果一覧.push(検査結果::生成する(
         8,
         "保管先backendを差し替えても同じcommitを復元できる",
         "Git側を変更せず、複製した新backendから同じcommitの内容を復元できる",
-        scenario_check_8::実行する(&状態, &作業域, &実行ファイル),
+        restore_after_backend_replacement::実行する(&状態, &作業域, &実行ファイル),
     ));
     結果一覧.push(検査結果::生成する(
         9,
         "tracked filesに認証情報とPC固有の実pathを含まない",
         "tracked filesを検査しても認証情報とPC固有の実pathを含まない",
-        scenario_check_9::実行する(),
+        tracked_files_have_no_secrets::実行する(),
     ));
 
     // 前提: `LFS_RCLONE_ACCEPT_KEEP_WORKSPACE`を設定すると一時作業域を削除せずに残す。

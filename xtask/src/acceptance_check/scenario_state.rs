@@ -1,6 +1,7 @@
 //! 受入試験1〜6番が共有する状態。可変の途中経過をこの型のメソッドへ閉じ、自由関数へ
 //! `&mut`で連鎖させない（グローバルCLAUDE.md「可変のドメイン状態を&mutで…通さない」）。
-//! 各項目の実装は`scenario_chain_1_3.rs`・`scenario_chain_4_6.rs`が続きの`impl`として持つ。
+//! 各項目の実装は`pointer_only_commit.rs`から`repush_avoids_duplicate.rs`まで、項目ごとに
+//! 1ファイルずつ続きの`impl`として持つ。
 
 use std::path::PathBuf;
 
