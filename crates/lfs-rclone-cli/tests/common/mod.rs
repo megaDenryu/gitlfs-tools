@@ -7,7 +7,9 @@
 
 #![allow(dead_code)]
 
+pub mod cli_invocation;
 pub mod fixtures;
+pub mod git_fixture;
 pub mod payload;
 pub mod process;
 pub mod rclone_executable;

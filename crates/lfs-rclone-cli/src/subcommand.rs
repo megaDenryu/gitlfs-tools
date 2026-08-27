@@ -1,0 +1,72 @@
+//! CLI引数から解釈した1件のサブコマンドと、その引数を表す判別共用体。
+//! サブコマンド名の綴りは英語にする（Gitのサブコマンドと並んで使われるため）。
+
+use lfs_rclone_domain::プロファイル名;
+
+use crate::install_target_path::登録する実行ファイルパス;
+use crate::launch_argument_error::起動引数エラー;
+
+pub(crate) enum サブコマンド {
+    導入 { 実行ファイルパス: Option<登録する実行ファイルパス> },
+    雛形生成 { プロファイル: プロファイル名 },
+    検証,
+    ヘルプ,
+}
+
+impl サブコマンド {
+    pub(crate) fn 解釈する(名前: &str, 残り引数: &[String]) -> Result<Self, 起動引数エラー> {
+        match 名前 {
+            "install" => 導入引数を解釈する(残り引数),
+            "init-project" => 雛形生成引数を解釈する(残り引数),
+            "doctor" => 引数なしを確かめる(名前, 残り引数).map(|()| Self::検証),
+            "help" | "--help" | "-h" => 引数なしを確かめる(名前, 残り引数).map(|()| Self::ヘルプ),
+            他 => Err(起動引数エラー::未知のサブコマンド { 名前: 他.to_owned() }),
+        }
+    }
+}
+
+fn 引数なしを確かめる(名前: &str, 残り引数: &[String]) -> Result<(), 起動引数エラー> {
+    match 残り引数.first() {
+        None => Ok(()),
+        Some(余分) => Err(起動引数エラー::未知の引数 { サブコマンド: 名前.to_owned(), 名前: 余分.clone() }),
+    }
+}
+
+fn 導入引数を解釈する(引数: &[String]) -> Result<サブコマンド, 起動引数エラー> {
+    let mut 実行ファイルパス = None;
+    let mut 残り = 引数.iter();
+    while let Some(項目) = 残り.next() {
+        match 項目.as_str() {
+            "--path" => {
+                let 値 = 残り.next().ok_or_else(|| 起動引数エラー::値が必要な引数 {
+                    サブコマンド: "install".to_owned(),
+                    引数名: "--path".to_owned(),
+                })?;
+                実行ファイルパス = Some(登録する実行ファイルパス::指定パスから生成する(値));
+            }
+            他 => return Err(起動引数エラー::未知の引数 { サブコマンド: "install".to_owned(), 名前: 他.to_owned() }),
+        }
+    }
+    Ok(サブコマンド::導入 { 実行ファイルパス })
+}
+
+fn 雛形生成引数を解釈する(引数: &[String]) -> Result<サブコマンド, 起動引数エラー> {
+    let mut プロファイル文字列 = None;
+    let mut 残り = 引数.iter();
+    while let Some(項目) = 残り.next() {
+        match 項目.as_str() {
+            "--profile" => {
+                let 値 = 残り.next().ok_or_else(|| 起動引数エラー::値が必要な引数 {
+                    サブコマンド: "init-project".to_owned(),
+                    引数名: "--profile".to_owned(),
+                })?;
+                プロファイル文字列 = Some(値.clone());
+            }
+            他 => return Err(起動引数エラー::未知の引数 { サブコマンド: "init-project".to_owned(), 名前: 他.to_owned() }),
+        }
+    }
+    let プロファイル文字列 = プロファイル文字列.ok_or(起動引数エラー::プロファイル名が必要)?;
+    let プロファイル =
+        プロファイル名::生成する(プロファイル文字列).map_err(|エラー| 起動引数エラー::プロファイル名が不正 { 説明: エラー.to_string() })?;
+    Ok(サブコマンド::雛形生成 { プロファイル })
+}
