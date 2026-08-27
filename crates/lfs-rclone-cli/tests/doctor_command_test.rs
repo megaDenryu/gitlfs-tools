@@ -39,6 +39,8 @@ fn doctorはすべて揃っていれば0終了する() -> Result<(), Box<dyn std
     let 一時ディレクトリ = tempfile::tempdir()?;
     let 作業ツリー = common::fixtures::プロジェクト作業ツリーを作る("doctor-full")?;
     common::git_fixture::初期化する(作業ツリー.path())?;
+    common::git_fixture::lfsを有効化する(作業ツリー.path())?;
+    std::fs::write(作業ツリー.path().join(".gitattributes"), "*.bin filter=lfs diff=lfs merge=lfs -text\n")?;
     let pc設定 =
         common::fixtures::pc設定ディレクトリを作る("doctor-full", &ドライブ, &残り, 一時ディレクトリ.path(), rclone実行ファイル.as_deref())?;
 

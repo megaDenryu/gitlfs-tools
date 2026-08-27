@@ -6,6 +6,7 @@
 use std::path::PathBuf;
 
 const プロジェクト設定ファイル名: &str = ".large-assets.toml";
+const GITATTRIBUTESファイル名: &str = ".gitattributes";
 
 #[repr(transparent)]
 pub(crate) struct 作業ツリールート(PathBuf);
@@ -18,5 +19,10 @@ impl 作業ツリールート {
     /// このルートに置く`.large-assets.toml`の配置先。
     pub(crate) fn プロジェクト設定ファイルパス(&self) -> PathBuf {
         self.0.join(プロジェクト設定ファイル名)
+    }
+
+    /// このルートに置く`.gitattributes`の配置先。
+    pub(crate) fn gitattributesファイルパス(&self) -> PathBuf {
+        self.0.join(GITATTRIBUTESファイル名)
     }
 }

@@ -1,6 +1,9 @@
 //! `doctor`サブコマンドの実行。プロジェクト設定・PC設定・プロファイル解決・rcloneの
-//! 起動可否・一時ディレクトリの作成可否・Git側の設定登録を順に確認し、不足があれば
-//! 利用者が次に取るべき行動とともに報告する（Issue #8「設定を検証する」節）。
+//! 起動可否・一時ディレクトリの作成可否・Git LFSの導入状況・Gitの各種設定・保管先への
+//! 書き込み可否を順に確認し、不足があれば利用者が次に取るべき行動とともに報告する
+//! （Issue #8「設定を検証する」節）。診断項目が増えても本体は一覧の組み立てに専念し、
+//! 各項目の判定は名前を付けられる責務ごとに別ファイルへ分ける
+//! （コード分割規約.md「1つの概念のファイルが3本以上になった」の昇格経路）。
 
 use std::process::ExitCode;
 
@@ -10,7 +13,10 @@ use crate::diagnostic_finding::診断結果;
 use crate::git_repository::Gitリポジトリ;
 use crate::pc_config_location_resolution::pc設定の場所を解決する;
 use crate::working_directory_resolution::作業ディレクトリを解決する;
-use crate::{config_diagnostic, git_transfer_diagnostic, rclone_startup_check, temp_directory_provisioning};
+use crate::{
+    config_diagnostic, git_attributes_diagnostic, git_lfs_filter_diagnostic, git_lfs_installation_diagnostic,
+    git_transfer_diagnostic, rclone_startup_check, storage_write_diagnostic, temp_directory_provisioning,
+};
 
 pub(crate) fn 検証を実行する() -> ExitCode {
     let 結果一覧 = 診断結果を集める();
@@ -27,6 +33,7 @@ pub(crate) fn 検証を実行する() -> ExitCode {
 
 fn 診断結果を集める() -> Vec<診断結果> {
     let mut 結果一覧 = Vec::new();
+    結果一覧.push(git_lfs_installation_diagnostic::診断する());
 
     let 起点 = match 作業ディレクトリを解決する() {
         Ok(ディレクトリ) => ディレクトリ,
@@ -49,9 +56,12 @@ fn 診断結果を集める() -> Vec<診断結果> {
 
     結果一覧.push(rclone起動を診断する(設定診断.プロファイル.as_ref()));
     結果一覧.push(一時ディレクトリを診断する(設定診断.プロファイル.as_ref()));
+    結果一覧.push(storage_write_diagnostic::診断する(設定診断.プロファイル.as_ref()));
 
     let リポジトリ検出結果 = Gitリポジトリ::現在地から検出する();
     結果一覧.push(git_transfer_diagnostic::診断する(リポジトリ検出結果.as_ref()));
+    結果一覧.push(git_lfs_filter_diagnostic::診断する(リポジトリ検出結果.as_ref()));
+    結果一覧.push(git_attributes_diagnostic::診断する(リポジトリ検出結果.as_ref()));
 
     結果一覧
 }

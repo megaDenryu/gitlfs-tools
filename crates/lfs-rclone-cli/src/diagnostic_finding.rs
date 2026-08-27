@@ -6,6 +6,7 @@ use std::fmt::Display;
 
 pub(crate) enum 診断結果 {
     問題なし { 項目: &'static str },
+    注記あり { 項目: &'static str, 注記: String },
     不足 { 項目: &'static str, 何が: String, どうすれば直るか: String },
 }
 
@@ -15,12 +16,13 @@ impl 診断結果 {
     }
 
     pub(crate) fn 揃っているか(&self) -> bool {
-        matches!(self, Self::問題なし { .. })
+        matches!(self, Self::問題なし { .. } | Self::注記あり { .. })
     }
 
     pub(crate) fn 表示行一覧(&self) -> Vec<String> {
         match self {
             Self::問題なし { 項目 } => vec![format!("[OK] {項目}")],
+            Self::注記あり { 項目, 注記 } => vec![format!("[OK] {項目}"), format!("       注記: {注記}")],
             Self::不足 { 項目, 何が, どうすれば直るか } => {
                 vec![format!("[不足] {項目}: {何が}"), format!("       対処: {どうすれば直るか}")]
             }
