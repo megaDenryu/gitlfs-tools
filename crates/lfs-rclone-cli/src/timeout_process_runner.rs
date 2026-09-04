@@ -11,6 +11,8 @@ use std::time::{Duration, Instant};
 
 use lfs_rclone_domain::{保管エラー, Rclone実行ファイルの場所, 転送タイムアウト};
 
+use crate::child_process_exit_code::子プロセスの終了コードを表す文字列を作る;
+
 const 監視間隔: Duration = Duration::from_millis(20);
 
 /// rclone実行ファイルの指定とタイムアウトを保持し、rcloneの起動を行うサービス。
@@ -37,7 +39,9 @@ impl タイムアウト付きrclone実行器 {
 
         match self.終了を待つ(&mut 子プロセス) {
             Ok(状態) if 状態.success() => Ok(()),
-            Ok(状態) => Err(保管エラー::子プロセス { 説明: format!("終了コード{:?}で失敗しました", 状態.code()) }),
+            Ok(状態) => Err(保管エラー::子プロセス {
+                説明: format!("終了コード{}で失敗しました", 子プロセスの終了コードを表す文字列を作る(&状態)),
+            }),
             Err(エラー) => {
                 let _ = 子プロセス.kill();
                 let _ = 子プロセス.wait();

@@ -18,7 +18,10 @@ impl 転送操作種別 {
             Some("upload") => Ok(Self::アップロード),
             Some("download") => Ok(Self::ダウンロード),
             _ => Err(プロトコル解析エラー::必須フィールド欠落または不正 {
-                説明: format!("initのoperationがupload/downloadのいずれでもありません: {値:?}"),
+                説明: format!(
+                    "initのoperationがupload/downloadのいずれでもありません: {}",
+                    値.unwrap_or("(未指定)")
+                ),
             }),
         }
     }

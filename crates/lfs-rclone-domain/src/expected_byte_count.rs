@@ -16,3 +16,11 @@ impl 期待バイト数 {
         self.0
     }
 }
+
+/// 利用者が読むエラー文へ埋め込むための表示。単位を付けずに数値だけを書き、
+/// 埋め込む側の文（「バイト数が一致しません(期待: ..., 実際: ...)」等）が意味を担う。
+impl std::fmt::Display for 期待バイト数 {
+    fn fmt(&self, 出力先: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(出力先, "{}", self.0)
+    }
+}

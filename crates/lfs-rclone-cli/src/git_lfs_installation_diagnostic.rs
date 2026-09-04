@@ -5,6 +5,7 @@
 
 use std::process::{Command, Stdio};
 
+use crate::child_process_exit_code::子プロセスの終了コードを表す文字列を作る;
 use crate::diagnostic_finding::診断結果;
 
 const 項目名: &str = "Git LFSの導入確認";
@@ -14,7 +15,8 @@ pub(crate) fn 診断する() -> 診断結果 {
     match Command::new("git").args(["lfs", "version"]).stdin(Stdio::null()).output() {
         Ok(出力) if 出力.status.success() => 診断結果::問題なし { 項目: 項目名 },
         Ok(出力) => {
-            let 説明 = format!("git lfs versionが終了コード{:?}で失敗しました", 出力.status.code());
+            let 終了コード = 子プロセスの終了コードを表す文字列を作る(&出力.status);
+            let 説明 = format!("git lfs versionが終了コード{終了コード}で失敗しました");
             診断結果::不足から生成する(項目名, &説明, 導入手順の案内)
         }
         Err(エラー) => 診断結果::不足から生成する(項目名, &エラー, 導入手順の案内),

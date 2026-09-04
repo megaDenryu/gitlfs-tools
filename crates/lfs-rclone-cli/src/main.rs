@@ -7,6 +7,7 @@
 //! （CLAUDE.md「標準出力の規律」）。引数なしの起動だけがプロトコル通信であり、
 //! この分岐（`launch_mode`）を変えるとGit LFSとの通信経路が壊れる。
 
+mod child_process_exit_code;
 mod command_error;
 mod config_diagnostic;
 mod config_error_mapping;
