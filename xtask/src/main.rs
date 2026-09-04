@@ -5,6 +5,7 @@
 mod acceptance_check;
 mod binary_install;
 mod command_registry;
+mod error_code_table;
 mod line_count;
 mod verify_command;
 

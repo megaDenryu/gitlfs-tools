@@ -5,6 +5,7 @@
 
 use crate::acceptance_check::受入試験コマンド;
 use crate::binary_install::実行ファイル配置コマンド;
+use crate::error_code_table::エラーコード対応表検査コマンド;
 use crate::line_count::行数検査コマンド;
 use crate::verify_command::検証コマンド;
 
@@ -25,6 +26,7 @@ impl サブコマンド登録簿 {
             登録済み: vec![
                 Box::new(検証コマンド),
                 Box::new(行数検査コマンド),
+                Box::new(エラーコード対応表検査コマンド),
                 Box::new(受入試験コマンド),
                 Box::new(実行ファイル配置コマンド),
             ],
@@ -36,7 +38,7 @@ impl サブコマンド登録簿 {
         println!();
         println!("コマンド:");
         for コマンド in &self.登録済み {
-            println!("  {:<18} {}", コマンド.名前(), コマンド.説明());
+            println!("  {:<23} {}", コマンド.名前(), コマンド.説明());
         }
     }
 

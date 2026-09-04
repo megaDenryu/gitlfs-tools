@@ -6,6 +6,7 @@
 use std::process::Command;
 
 use crate::command_registry::サブコマンド;
+use crate::error_code_table::エラーコード対応表検査コマンド;
 use crate::line_count::行数検査コマンド;
 
 pub struct 検証コマンド;
@@ -24,6 +25,11 @@ impl サブコマンド for 検証コマンド {
         行数検査コマンド
             .実行する(&[])
             .map_err(|失敗| format!("行数検査で失敗した。{失敗}"))?;
+
+        eprintln!("== エラーコード対応表の検査: cargo xtask check-error-code-table ==");
+        エラーコード対応表検査コマンド
+            .実行する(&[])
+            .map_err(|失敗| format!("エラーコード対応表の検査で失敗した。{失敗}"))?;
 
         // 前提: `lfs-rclone-rclone/test-support`はテスト専用の偽rclone実行ファイル
         // （`fake_rclone`）を有効にする機能である。既定は無効であり、無効のままだと
