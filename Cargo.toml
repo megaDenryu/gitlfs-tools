@@ -6,6 +6,7 @@ members = [
     "crates/lfs-rclone-config",
     "crates/lfs-rclone-transfer",
     "crates/lfs-rclone-rclone",
+    "crates/lfs-rclone-local",
     "crates/lfs-rclone-protocol",
     "crates/lfs-rclone-cli",
     "xtask",
@@ -23,6 +24,7 @@ lfs-rclone-storage-port = { path = "crates/lfs-rclone-storage-port" }
 lfs-rclone-config = { path = "crates/lfs-rclone-config" }
 lfs-rclone-transfer = { path = "crates/lfs-rclone-transfer" }
 lfs-rclone-rclone = { path = "crates/lfs-rclone-rclone" }
+lfs-rclone-local = { path = "crates/lfs-rclone-local" }
 lfs-rclone-protocol = { path = "crates/lfs-rclone-protocol" }
 
 serde = { version = "1", features = ["derive"] }

@@ -14,13 +14,20 @@ pub(crate) struct PC設定TOML表現 {
     pub(crate) profiles: HashMap<String, PCプロファイルTOML表現>,
 }
 
+/// 保管先の種類（`storage`）によって必要なキーが変わるため、種類ごとに必要・不要が分かれる
+/// キーは`Option`で受け、要求の検査は`保管先の指定`が行う（`storage_specification.rs`）。
+/// serdeの必須キー検査に任せると、種類に応じた案内文を出せない。
 #[derive(Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub(crate) struct PCプロファイルTOML表現 {
-    pub(crate) rclone_remote: String,
+    #[serde(default)]
+    pub(crate) storage: Option<String>,
     pub(crate) base_path: String,
     pub(crate) temp_directory: String,
-    pub(crate) transfer_timeout_seconds: u64,
+    #[serde(default)]
+    pub(crate) rclone_remote: Option<String>,
+    #[serde(default)]
+    pub(crate) transfer_timeout_seconds: Option<u64>,
     #[serde(default)]
     pub(crate) rclone_executable: Option<String>,
 }

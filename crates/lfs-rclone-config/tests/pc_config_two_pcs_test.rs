@@ -3,8 +3,16 @@
 
 use std::io;
 
-use lfs_rclone_config::PC設定の場所;
+use lfs_rclone_config::{PC設定の場所, PCプロファイル, 保管先の指定};
 use lfs_rclone_domain::プロファイル名;
+
+/// PCごとに違うのはrcloneのリモート名であるため、その1つだけを取り出す。
+fn rcloneリモート名を取り出す(プロファイル: &PCプロファイル) -> Result<String, Box<dyn std::error::Error>> {
+    match プロファイル.保管先() {
+        保管先の指定::Rclone子プロセス { リモート名, .. } => Ok(リモート名.文字列表現().to_owned()),
+        保管先の指定::ローカルディレクトリ { .. } => Err("rclone子プロセス方式として解決されるべき".into()),
+    }
+}
 
 fn pc設定ディレクトリを作る(内容: &str) -> io::Result<tempfile::TempDir> {
     let ディレクトリ = tempfile::tempdir()?;
@@ -38,11 +46,11 @@ fn 同じ論理プロファイル名がpcごとに異なるリモート名へ解
     let pcaのプロファイル = pca設定.プロファイルを解決する(&プロファイル名)?;
     let pcbのプロファイル = pcb設定.プロファイルを解決する(&プロファイル名)?;
 
-    assert_eq!(pcaのプロファイル.rcloneリモート().文字列表現(), "pc-a-remote");
-    assert_eq!(pcbのプロファイル.rcloneリモート().文字列表現(), "pc-b-remote");
-    assert_ne!(
-        pcaのプロファイル.rcloneリモート().文字列表現(),
-        pcbのプロファイル.rcloneリモート().文字列表現()
-    );
+    let pcaのリモート名 = rcloneリモート名を取り出す(pcaのプロファイル)?;
+    let pcbのリモート名 = rcloneリモート名を取り出す(pcbのプロファイル)?;
+
+    assert_eq!(pcaのリモート名, "pc-a-remote");
+    assert_eq!(pcbのリモート名, "pc-b-remote");
+    assert_ne!(pcaのリモート名, pcbのリモート名);
     Ok(())
 }

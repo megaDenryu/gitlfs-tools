@@ -23,16 +23,20 @@ mod install_command;
 mod install_target_path;
 mod launch_argument_error;
 mod launch_mode;
+mod local_storage_write_probe;
+mod object_storage_selection;
 mod pc_config_location_resolution;
 mod project_config_template;
-mod rclone_init_boundary;
 mod rclone_startup_check;
-mod rclone_transfer_session;
+mod storage_assembly;
+mod storage_reachability_diagnostic;
 mod storage_write_diagnostic;
 mod storage_write_probe;
 mod subcommand;
 mod temp_directory_provisioning;
 mod timeout_process_runner;
+mod transfer_init_boundary;
+mod transfer_session;
 mod usage_text;
 mod work_tree_root;
 mod working_directory_resolution;
@@ -44,8 +48,8 @@ use lfs_rclone_protocol::プロトコルセッション;
 
 use crate::launch_mode::起動モード;
 use crate::pc_config_location_resolution::pc設定の場所を解決する;
-use crate::rclone_init_boundary::Rclone初期化境界;
 use crate::subcommand::サブコマンド;
+use crate::transfer_init_boundary::転送セッション初期化境界;
 use crate::usage_text::使い方テキスト;
 use crate::working_directory_resolution::作業ディレクトリを解決する;
 
@@ -86,7 +90,7 @@ fn プロトコル通信で起動する() -> ExitCode {
         }
     };
 
-    let 境界 = Rclone初期化境界::生成する(起点ディレクトリ, pc設定の場所);
+    let 境界 = 転送セッション初期化境界::生成する(起点ディレクトリ, pc設定の場所);
     let セッション = プロトコルセッション::生成する(境界);
 
     if セッション.実行する().正常か() { ExitCode::SUCCESS } else { ExitCode::FAILURE }

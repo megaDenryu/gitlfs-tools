@@ -9,7 +9,7 @@ use lfs_rclone_domain::{一時ディレクトリ, 保管エラー, 保管先オ�
 
 use crate::timeout_process_runner::タイムアウト付きrclone実行器;
 
-const 確認用のペイロード: &[u8] = b"git-lfs-rclone-storage doctor probe\n";
+pub(crate) const 確認用のペイロード: &[u8] = b"git-lfs-rclone-storage doctor probe\n";
 
 /// 書き込みと読み戻し自体は成功したことを前提に、後片づけ（保管先の一時オブジェクトの
 /// 削除）が残っているかどうかを表す。

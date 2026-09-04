@@ -15,7 +15,7 @@ use crate::pc_config_location_resolution::pc設定の場所を解決する;
 use crate::working_directory_resolution::作業ディレクトリを解決する;
 use crate::{
     config_diagnostic, git_attributes_diagnostic, git_lfs_filter_diagnostic, git_lfs_installation_diagnostic,
-    git_transfer_diagnostic, rclone_startup_check, storage_write_diagnostic, temp_directory_provisioning,
+    git_transfer_diagnostic, storage_reachability_diagnostic, storage_write_diagnostic, temp_directory_provisioning,
 };
 
 pub(crate) fn 検証を実行する() -> ExitCode {
@@ -54,7 +54,7 @@ fn 診断結果を集める() -> Vec<診断結果> {
     let 設定診断 = config_diagnostic::診断する(&起点, &pc設定の場所);
     結果一覧.extend(設定診断.結果一覧);
 
-    結果一覧.push(rclone起動を診断する(設定診断.プロファイル.as_ref()));
+    結果一覧.push(storage_reachability_diagnostic::診断する(設定診断.プロファイル.as_ref()));
     結果一覧.push(一時ディレクトリを診断する(設定診断.プロファイル.as_ref()));
     結果一覧.push(storage_write_diagnostic::診断する(設定診断.プロファイル.as_ref()));
 
@@ -64,17 +64,6 @@ fn 診断結果を集める() -> Vec<診断結果> {
     結果一覧.push(git_attributes_diagnostic::診断する(リポジトリ検出結果.as_ref()));
 
     結果一覧
-}
-
-fn rclone起動を診断する(プロファイル: Option<&PCプロファイル>) -> 診断結果 {
-    let 項目 = "rcloneの起動確認";
-    let Some(プロファイル) = プロファイル else {
-        return 診断結果::不足から生成する(項目, &"プロファイルが解決できていません", "先に設定の不足を解消してください");
-    };
-    match rclone_startup_check::rclone実行ファイルの起動可否を確かめる(プロファイル.rclone実行ファイル()) {
-        Ok(()) => 診断結果::問題なし { 項目 },
-        Err(エラー) => 診断結果::不足から生成する(項目, &エラー, "rcloneを導入するか、PC設定のrclone_executableでパスを明示してください"),
-    }
 }
 
 fn 一時ディレクトリを診断する(プロファイル: Option<&PCプロファイル>) -> 診断結果 {

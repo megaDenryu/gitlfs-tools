@@ -36,6 +36,34 @@ cargo xtask verify
 
 利用者向けの導入手順は Issue #8 の完了時に本節へ追記する。
 
+## 保管先の種類
+
+PC設定（`config.toml`）のプロファイルごとに、保管先へどう書くかを`storage`キーで選ぶ。
+`storage`を省略したプロファイルは、従来どおりrcloneを子プロセスとして起動する方式として扱う。
+
+| `storage` | 何をするか | 必要なキー | 書いてはならないキー |
+|---|---|---|---|
+| `rclone`（省略時の既定） | rcloneを子プロセスとして起動し、リモートへ転送する | `rclone_remote`, `base_path`, `temp_directory`, `transfer_timeout_seconds`（`rclone_executable`は任意） | なし |
+| `local` | 標準ライブラリのファイル操作だけで、マウント済みのローカルパスへ転送する | `base_path`, `temp_directory` | `rclone_remote`, `rclone_executable`, `transfer_timeout_seconds` |
+
+`local`は、Google Driveのデスクトップアプリのようにクラウドストレージがドライブとして
+マウントされている場合に選ぶ。転送1件ごとのrcloneの起動（存在確認・転送・最終化で最大4回）が
+無くなる。`base_path`はマウント済みの絶対パスを
+書き、保管先のディレクトリ構成は`rclone`方式と同じである
+（`<base_path>/lfs/objects/sha256/<先頭2文字>/<次の2文字>/<oid>`）。
+
+`base_path`が指すディレクトリが存在しないときは、`init`と`doctor`が明示的に失敗する。
+ドライブがマウントされていない状態で転送を始め、実体がローカルディスクへ溜まるのを防ぐためである。
+
+```toml
+schema_version = 1
+
+[profiles.personal-large-assets]
+storage = "local"
+base_path = "G:/マイドライブ/git-lfs-rclone-storage"
+temp_directory = "D:/large-assets-tmp"
+```
+
 ## 文書一覧（生存型）
 
 常に実装と一致させる義務がある文書。ここに無い設計文書は正典ではない。

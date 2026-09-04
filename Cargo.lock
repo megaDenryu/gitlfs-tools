@@ -196,6 +196,7 @@ version = "0.1.0"
 dependencies = [
  "lfs-rclone-config",
  "lfs-rclone-domain",
+ "lfs-rclone-local",
  "lfs-rclone-protocol",
  "lfs-rclone-rclone",
  "lfs-rclone-storage-port",
@@ -226,6 +227,16 @@ dependencies = [
  "tempfile",
  "thiserror",
  "uuid",
+]
+
+[[package]]
+name = "lfs-rclone-local"
+version = "0.1.0"
+dependencies = [
+ "lfs-rclone-domain",
+ "lfs-rclone-storage-port",
+ "sha2",
+ "tempfile",
 ]
 
 [[package]]

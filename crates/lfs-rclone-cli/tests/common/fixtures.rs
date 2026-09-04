@@ -52,3 +52,24 @@ pub fn pc設定ディレクトリを作る(
     fs::write(ディレクトリ.path().join("config.toml"), 内容)?;
     Ok(ディレクトリ)
 }
+
+/// `storage = "local"`の1プロファイルだけを持つPC設定ディレクトリを作る。ローカル
+/// ディレクトリ方式ではrcloneの3キーを書けないため、この関数は受け取らない。
+pub fn ローカル方式のpc設定ディレクトリを作る(
+    プロファイル名: &str,
+    保管先ルート: &Path,
+    一時ディレクトリ: &Path,
+) -> Result<TempDir, Box<dyn std::error::Error>> {
+    let ディレクトリ = tempfile::tempdir()?;
+    let 内容 = format!(
+        "schema_version = 1\n\
+         [profiles.{プロファイル名}]\n\
+         storage = \"local\"\n\
+         base_path = \"{}\"\n\
+         temp_directory = \"{}\"\n",
+        保管先ルート.to_string_lossy().replace('\\', "/"),
+        一時ディレクトリ.to_string_lossy().replace('\\', "/")
+    );
+    fs::write(ディレクトリ.path().join("config.toml"), 内容)?;
+    Ok(ディレクトリ)
+}
