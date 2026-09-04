@@ -8,6 +8,7 @@
 use std::process::Command;
 
 use crate::command_error::コマンド実行エラー;
+use crate::git_hook_directory::Gitフック置き場;
 use crate::work_tree_root::作業ツリールート;
 
 /// 現在の作業ディレクトリから到達できるGitリポジトリを表す。パスの綴りをこの型の
@@ -42,6 +43,19 @@ impl Gitリポジトリ {
             return Err(コマンド実行エラー::Gitリポジトリ外);
         }
         Ok(作業ツリールート::生成する(String::from_utf8_lossy(&出力.stdout).trim().into()))
+    }
+
+    /// Gitがフックを探すディレクトリ。`core.hooksPath`が設定されていればそちらを指すため、
+    /// `.git/hooks`を直に綴らず`git rev-parse --git-path hooks`に決めさせる。
+    pub(crate) fn フック置き場を取得する(&self) -> Result<Gitフック置き場, コマンド実行エラー> {
+        let 出力 = Command::new("git")
+            .args(["rev-parse", "--git-path", "hooks"])
+            .output()
+            .map_err(|エラー| コマンド実行エラー::Gitコマンド起動失敗 { 説明: エラー.to_string() })?;
+        if !出力.status.success() {
+            return Err(コマンド実行エラー::Gitリポジトリ外);
+        }
+        Ok(Gitフック置き場::生成する(String::from_utf8_lossy(&出力.stdout).trim().into()))
     }
 
     /// `--local`設定を取得する。未設定またはコマンド失敗は区別せず`None`にする
