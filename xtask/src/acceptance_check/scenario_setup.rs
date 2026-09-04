@@ -38,10 +38,12 @@ pub fn 模擬pcを組み立てる(
     std::fs::write(&分離global設定ファイル, "").map_err(|失敗| format!("{}を作成できなかった: {失敗}", 分離global設定ファイル.display()))?;
 
     let pc設定 = PC設定ディレクトリ::生成する(作業域.子パス(&format!("{名前}_pcconfig")));
-    let 一時ディレクトリ = 作業域.子ディレクトリ(&format!("{名前}_temp"))?;
+    // 作らずにパスだけ組み立てる。agentが`temp_directory`を読まなくなったことを、
+    // 「このディレクトリが最後まで存在しないこと」で確かめるためである（項目3）。
+    let 一時ディレクトリ = 作業域.子パス(&format!("{名前}_temp"));
     pc設定.単一プロファイルで準備する(プロファイル名, 保管先, &一時ディレクトリ)?;
 
-    let pc = 模擬PC::生成する(名前, 分離global設定ファイル, pc設定, 実行ファイル.clone());
+    let pc = 模擬PC::生成する(名前, 分離global設定ファイル, pc設定, 一時ディレクトリ, 実行ファイル.clone());
     pc.git実行(作業域.ルート(), &[], &["lfs", "install", "--skip-repo"])?.成功を要求する(&format!("{名前}のgit lfs install"))?;
     Ok(pc)
 }

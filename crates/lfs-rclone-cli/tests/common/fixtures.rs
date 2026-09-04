@@ -18,12 +18,20 @@ pub fn ドライブとパスへ分ける(絶対パス: &Path) -> Result<(String,
     Ok((ドライブ.to_owned(), 残り.to_owned()))
 }
 
-/// `.large-assets.toml`だけを含むプロジェクト作業ツリーを作る。
+/// `.large-assets.toml`だけを含むプロジェクト作業ツリーを、隔離したGitリポジトリとして作る。
+/// agentはダウンロードの一時ファイル置き場をGitリポジトリから決めるため、`init`を通す
+/// テストの作業ツリーは実際のリポジトリでなければならない（Git LFSが起動する実環境と同じ）。
 pub fn プロジェクト作業ツリーを作る(プロファイル名: &str) -> Result<TempDir, Box<dyn std::error::Error>> {
     let ディレクトリ = tempfile::tempdir()?;
     let 内容 = format!("schema_version = 1\nprofile = \"{プロファイル名}\"\n");
     fs::write(ディレクトリ.path().join(".large-assets.toml"), 内容)?;
+    super::git_fixture::初期化する(ディレクトリ.path())?;
     Ok(ディレクトリ)
+}
+
+/// このプロジェクト作業ツリーでagentがダウンロードの一時ファイルを置く場所。
+pub fn ダウンロード一時ディレクトリのパス(作業ツリー: &Path) -> std::path::PathBuf {
+    作業ツリー.join(".git").join("lfs").join("tmp").join("rclone-storage-agent")
 }
 
 /// 指定した1プロファイルだけを持つPC設定ディレクトリを作る。`rclone_executable`は省略時

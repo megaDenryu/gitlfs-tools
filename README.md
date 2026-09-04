@@ -43,8 +43,8 @@ PC設定（`config.toml`）のプロファイルごとに、保管先へどう�
 
 | `storage` | 何をするか | 必要なキー | 書いてはならないキー |
 |---|---|---|---|
-| `rclone`（省略時の既定） | rcloneを子プロセスとして起動し、リモートへ転送する | `rclone_remote`, `base_path`, `temp_directory`, `transfer_timeout_seconds`（`rclone_executable`は任意） | なし |
-| `local` | 標準ライブラリのファイル操作だけで、マウント済みのローカルパスへ転送する | `base_path`, `temp_directory` | `rclone_remote`, `rclone_executable`, `transfer_timeout_seconds` |
+| `rclone`（省略時の既定） | rcloneを子プロセスとして起動し、リモートへ転送する | `rclone_remote`, `base_path`, `transfer_timeout_seconds`（`rclone_executable`は任意） | なし |
+| `local` | 標準ライブラリのファイル操作だけで、マウント済みのローカルパスへ転送する | `base_path` | `rclone_remote`, `rclone_executable`, `transfer_timeout_seconds` |
 
 `local`は、Google Driveのデスクトップアプリのようにクラウドストレージがドライブとして
 マウントされている場合に選ぶ。転送1件ごとのrcloneの起動（存在確認・転送・最終化で最大4回）が
@@ -61,8 +61,21 @@ schema_version = 1
 [profiles.personal-large-assets]
 storage = "local"
 base_path = "G:/マイドライブ/git-lfs-rclone-storage"
-temp_directory = "D:/large-assets-tmp"
 ```
+
+## ダウンロードの一時ファイルの置き場所
+
+agentはダウンロードした実体をいったん一時ファイルへ書き、そのパスをGit LFSへ渡す。Git LFSは
+そのファイルの所有権を受け取り、リポジトリの`.git/lfs/objects/`へ`rename`で移す。`rename`は
+ボリュームをまたげないため、一時ファイルは必ずリポジトリと同じボリュームに無ければならない。
+
+そのため置き場所はPC設定ではなくリポジトリから決める。`git`へ問い合わせたGit LFSの保管
+ディレクトリ（既定は`<Gitディレクトリ>/lfs`、Git設定`lfs.storage`があればそれ）の下の
+`tmp/rclone-storage-agent`である。利用者が指定する項目は無い。
+
+PC設定の`temp_directory`はこの決定により読まれなくなった。既存の設定ファイルを壊さないため
+記述は受理し続けるが、値は使わない。`doctor`が残っていることを注記するので、見つけたら削除
+してよい。
 
 ## 文書一覧（生存型）
 
@@ -114,7 +127,7 @@ Git LFS custom transfer protocolは`error.code`の値域を定めていない。
 | 12 | oidが64文字の小文字16進文字列として不正 | Git LFS側の破損を疑い、再取得する |
 | 13 | 保存済みまたはダウンロード後のバイト数が要求と食い違う | 保管先の内容が破損していないか確認する |
 | 14 | ダウンロード後のSHA-256がoidと食い違う | 保管先の内容が破損していないか確認する。再ダウンロードしても直らなければ保管先を調査する |
-| 15 | ローカル一時ディレクトリの作成・読み書きに失敗した | `temp_directory`の権限・空き容量を確認する |
+| 15 | ローカル一時ディレクトリの作成・読み書きに失敗した | リポジトリのGitディレクトリへの書き込み権限と空き容量を確認する |
 | 16 | rcloneの子プロセス実行に失敗した（起動不能・非0終了・タイムアウトのいずれか） | rclone実行ファイルの状態、`transfer_timeout_seconds`、rclone側のログを確認する |
 | 17 | stdinの1行がJSONとして解析できない | agentを起動しているGit LFSの版を確認する。通常は起きない |
 | 18 | 未知の`event`を受け取った | agentを起動しているGit LFSの版を確認する。通常は起きない |

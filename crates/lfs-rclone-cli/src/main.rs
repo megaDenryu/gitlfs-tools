@@ -10,11 +10,15 @@
 mod command_error;
 mod config_diagnostic;
 mod config_error_mapping;
+mod deprecated_setting_diagnostic;
 mod diagnostic_finding;
 mod doctor_command;
+mod doctor_scratch_directory;
+mod download_temp_directory_diagnostic;
 mod git_attributes_diagnostic;
 mod git_lfs_filter_diagnostic;
 mod git_lfs_installation_diagnostic;
+mod git_lfs_storage_directory;
 mod git_repository;
 mod git_transfer_diagnostic;
 mod git_transfer_settings;

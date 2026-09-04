@@ -45,7 +45,7 @@ fn downloadの成功未存在整合性失敗と失敗後の継続を確かめる
     プロセス.一行受け取る()?;
     プロセス.一行受け取る()?;
 
-    ダウンロードして成功を確かめる(&mut プロセス, &oid, size, 内容)?;
+    ダウンロードして成功を確かめる(&mut プロセス, &oid, size, 内容, 作業ツリー.path())?;
 
     let 未存在oid = "f".repeat(64);
     プロセス.一行送る(&json!({"event": "download", "oid": 未存在oid, "size": 1, "action": null}))?;
@@ -57,14 +57,20 @@ fn downloadの成功未存在整合性失敗と失敗後の継続を確かめる
     let 整合性失敗応答 = プロセス.一行受け取る()?;
     assert!(整合性失敗応答.get("error").is_some(), "サイズ偽装は整合性エラーになるべき: {整合性失敗応答:?}");
 
-    ダウンロードして成功を確かめる(&mut プロセス, &oid, size, 内容)?; // 失敗後も継続できる
+    ダウンロードして成功を確かめる(&mut プロセス, &oid, size, 内容, 作業ツリー.path())?; // 失敗後も継続できる
 
     プロセス.一行送る(&json!({"event": "terminate"}))?;
     let (終了状態, _) = プロセス.終了を待って後始末する()?;
     assert!(終了状態.success());
 
-    let 残存ファイル数 = std::fs::read_dir(一時ディレクトリ.path())?.count();
+    let 一時ファイル置き場 = common::fixtures::ダウンロード一時ディレクトリのパス(作業ツリー.path());
+    let 残存ファイル数 = std::fs::read_dir(&一時ファイル置き場)?.count();
     assert_eq!(残存ファイル数, 2, "成功した2件のdownload先だけが残るべき(失敗分は削除済み)");
+    assert_eq!(
+        std::fs::read_dir(一時ディレクトリ.path())?.count(),
+        0,
+        "PC設定のtemp_directoryはもう使われないため、agentは何も置いてはならない"
+    );
     Ok(())
 }
 
@@ -73,6 +79,7 @@ fn ダウンロードして成功を確かめる(
     oid: &str,
     size: u64,
     期待する内容: &[u8],
+    作業ツリー: &Path,
 ) -> Result<(), Box<dyn std::error::Error>> {
     プロセス.一行送る(&json!({"event": "download", "oid": oid, "size": size, "action": null}))?;
     let 進捗 = プロセス.一行受け取る()?;
@@ -82,5 +89,19 @@ fn ダウンロードして成功を確かめる(
     assert_eq!(完了["oid"], oid);
     let 保存先 = 完了["path"].as_str().ok_or("pathが文字列ではありません")?;
     assert_eq!(std::fs::read(保存先)?, 期待する内容);
-    Ok(())
+    一時ファイルがリポジトリと同じボリュームにあることを確かめる(Path::new(保存先), 作業ツリー)
+}
+
+/// Git LFSは`complete`で受け取ったファイルをリポジトリの`.git/lfs/objects/`へ`rename`で
+/// 移す。ボリュームをまたぐ`rename`は失敗するため、一時ファイルはリポジトリの`.git`の
+/// 下に無ければならない。
+fn 一時ファイルがリポジトリと同じボリュームにあることを確かめる(保存先: &Path, 作業ツリー: &Path) -> Result<(), Box<dyn std::error::Error>> {
+    let 置き場 = common::fixtures::ダウンロード一時ディレクトリのパス(作業ツリー);
+    let 実際の親 = 保存先.parent().ok_or("一時ファイルに親ディレクトリがありません")?;
+    // 短縮名(8.3形式)と区切り文字の違いを吸収するため、実体を解決してから比べる。
+    if std::fs::canonicalize(実際の親)? == std::fs::canonicalize(&置き場)? {
+        Ok(())
+    } else {
+        Err(format!("一時ファイルがリポジトリの外にある: {} (期待した置き場: {})", 保存先.display(), 置き場.display()).into())
+    }
 }

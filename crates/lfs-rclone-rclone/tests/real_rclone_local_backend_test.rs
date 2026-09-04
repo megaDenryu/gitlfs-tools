@@ -52,9 +52,8 @@ fn 実rcloneのlocal_backendでアップロードから存在確認ダウンロ�
     let リモート名 = Rcloneリモート名::生成する(ドライブ)?;
     let 基底パス = 保管先基底パス::生成する(残り)?;
     let 作業ディレクトリ = tempfile::tempdir()?;
-    let 一時ディレクトリ = 一時ディレクトリ::生成する(作業ディレクトリ.path());
     let タイムアウト = 転送タイムアウト::生成する(Duration::from_secs(30));
-    let 保管庫 = Rclone保管庫::生成する(実行ファイル, リモート名, 基底パス, 一時ディレクトリ, タイムアウト);
+    let 保管庫 = Rclone保管庫::生成する(実行ファイル, リモート名, 基底パス, タイムアウト);
 
     let 内容 = b"git-lfs-rclone-storage issue5 real rclone local backend roundtrip";
     let ダイジェスト = Sha256::digest(内容);

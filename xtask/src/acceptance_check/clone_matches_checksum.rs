@@ -5,6 +5,7 @@
 use std::ffi::OsStr;
 use std::path::Path;
 
+use crate::acceptance_check::download_temp_location;
 use crate::acceptance_check::scenario_state::{主鎖状態, 追跡ファイル名};
 use crate::acceptance_check::sha256_digest::ファイル指紋;
 
@@ -26,6 +27,7 @@ impl 主鎖状態 {
         if pc_a指紋 != pc_b指紋 {
             return Err(format!("PC AとPC Bの指紋が一致しない: PC A={pc_a指紋:?} PC B={pc_b指紋:?}"));
         }
-        Ok(format!("SHA-256={}, バイト数={}で一致した", pc_b指紋.sha256十六進, pc_b指紋.バイト数))
+        let 一時ファイルの所見 = download_temp_location::確かめる(&self.pc_b_workdir, self.pc_b.設定に残した一時ディレクトリ())?;
+        Ok(format!("SHA-256={}, バイト数={}で一致した。{一時ファイルの所見}", pc_b指紋.sha256十六進, pc_b指紋.バイト数))
     }
 }

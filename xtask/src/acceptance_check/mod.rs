@@ -6,6 +6,7 @@ mod check_result;
 mod checkout_restores_both_commits;
 mod clone_matches_checksum;
 mod download_fails_on_missing_or_corrupt;
+mod download_temp_location;
 mod lfs_pointer;
 mod object_storage_maintenance;
 mod object_storage_root;

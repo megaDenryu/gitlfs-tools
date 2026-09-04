@@ -16,16 +16,29 @@ pub struct 模擬PC {
     表示名: String,
     分離global設定ファイル: PathBuf,
     pc設定: PC設定ディレクトリ,
+    設定に残した一時ディレクトリ: PathBuf,
     実行ファイル: 対象実行ファイルパス,
 }
 
 impl 模擬PC {
-    pub fn 生成する(表示名: impl Into<String>, 分離global設定ファイル: PathBuf, pc設定: PC設定ディレクトリ, 実行ファイル: 対象実行ファイルパス) -> Self {
-        Self { 表示名: 表示名.into(), 分離global設定ファイル, pc設定, 実行ファイル }
+    pub fn 生成する(
+        表示名: impl Into<String>,
+        分離global設定ファイル: PathBuf,
+        pc設定: PC設定ディレクトリ,
+        設定に残した一時ディレクトリ: PathBuf,
+        実行ファイル: 対象実行ファイルパス,
+    ) -> Self {
+        Self { 表示名: 表示名.into(), 分離global設定ファイル, pc設定, 設定に残した一時ディレクトリ, 実行ファイル }
     }
 
     pub fn pc設定(&self) -> &PC設定ディレクトリ {
         &self.pc設定
+    }
+
+    /// このPCのconfig.tomlへ書いた`temp_directory`。agentはもうこの項目を読まないため、
+    /// 試験は「このディレクトリが作られていないこと」を使われていないことの証拠にする。
+    pub fn 設定に残した一時ディレクトリ(&self) -> &Path {
+        &self.設定に残した一時ディレクトリ
     }
 
     pub fn 実行ファイル(&self) -> &対象実行ファイルパス {

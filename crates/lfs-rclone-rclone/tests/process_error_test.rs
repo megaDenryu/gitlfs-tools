@@ -7,7 +7,7 @@ mod common;
 use std::time::{Duration, Instant};
 
 use lfs_rclone_domain::{
-    一時ディレクトリ, オブジェクト状態, オブジェクト識別子, 保管エラー, 保管先基底パス, 期待バイト数, Rclone実行ファイルの場所, Rcloneリモート名,
+    オブジェクト状態, オブジェクト識別子, 保管エラー, 保管先基底パス, 期待バイト数, Rclone実行ファイルの場所, Rcloneリモート名,
     転送タイムアウト,
 };
 use lfs_rclone_rclone::Rclone保管庫;
@@ -29,14 +29,7 @@ fn 存在しない実行ファイルなら起動失敗として区別できる()
     let 実行ファイル = Rclone実行ファイルの場所::指定パスから生成する("this-executable-should-not-exist-issue5.exe");
     let リモート名 = Rcloneリモート名::生成する("fakeremote")?;
     let 基底パス = 保管先基底パス::生成する("does-not-matter")?;
-    let 一時ディレクトリ = 一時ディレクトリ::生成する(std::env::temp_dir());
-    let 保管庫 = Rclone保管庫::生成する(
-        実行ファイル,
-        リモート名,
-        基底パス,
-        一時ディレクトリ,
-        転送タイムアウト::生成する(Duration::from_secs(2)),
-    );
+    let 保管庫 = Rclone保管庫::生成する(実行ファイル, リモート名, 基底パス, 転送タイムアウト::生成する(Duration::from_secs(2)));
 
     let 結果 = 保管庫.存在を確認する(&ダミー識別子()?, 期待バイト数::生成する(1));
     let 説明 = 子プロセスエラーの説明を取り出す(結果)?;

@@ -6,9 +6,11 @@
 //!   PCの絶対パス・トークン・client secretを書ける仕様にはしない
 //!   （`deny_unknown_fields`で未知キーを拒否する）。
 //! - PC設定はGit作業ツリーの外、OS標準の設定ディレクトリに置き、論理プロファイル名から
-//!   保管先の種類（`storage`）・`base_path`・`temp_directory`と、種類ごとの設定値
+//!   保管先の種類（`storage`）・`base_path`と、種類ごとの設定値
 //!   （rclone子プロセス方式なら`rclone_remote`・転送タイムアウト・`rclone_executable`）を
 //!   解決する。`storage`を省略した設定は従来どおりrclone子プロセス方式として扱う。
+//!   `temp_directory`は使われなくなった項目であり、読み込みは受け付けるが値を使わない
+//!   （`使われなくなった設定項目`）。
 //!
 //! この層は`domain`層の値型を再利用し、rcloneを起動しない。実行ファイルの存在確認も
 //! 行わない（判断1「rcloneアダプタは設定ファイルの形式を知らない」）。
@@ -33,6 +35,7 @@
 
 mod config_error;
 mod config_schema_version;
+mod deprecated_setting;
 mod local_storage_root;
 mod pc_config;
 mod pc_config_location;
@@ -45,6 +48,7 @@ mod storage_specification;
 
 pub use config_error::設定エラー;
 pub use config_schema_version::設定スキーマ版;
+pub use deprecated_setting::使われなくなった設定項目;
 pub use local_storage_root::ローカルファイルシステム上の保管先ルート;
 pub use pc_config::PC設定;
 pub use pc_config_location::PC設定の場所;

@@ -10,6 +10,7 @@ use lfs_rclone_config::{PCプロファイル, 保管先の指定};
 use lfs_rclone_local::ローカル保管先ルートディレクトリ;
 
 use crate::diagnostic_finding::診断結果;
+use crate::doctor_scratch_directory::書き込み確認用の作業領域;
 use crate::local_storage_write_probe::ローカル保管先の書き込み確認;
 use crate::storage_write_probe::{保管先書き込み確認, 書き込み確認結果};
 use crate::timeout_process_runner::タイムアウト付きrclone実行器;
@@ -25,7 +26,7 @@ pub(crate) fn 診断する(プロファイル: Option<&PCプロファイル>) ->
         保管先の指定::Rclone子プロセス { リモート名, 実行ファイル, 転送タイムアウト } => {
             let 実行器 = タイムアウト付きrclone実行器::生成する(実行ファイル.clone(), *転送タイムアウト);
             保管先書き込み確認::生成する(実行器, リモート名.clone())
-                .一時オブジェクトで確認する(プロファイル.基底パス(), プロファイル.一時ディレクトリ())
+                .一時オブジェクトで確認する(プロファイル.基底パス(), &書き込み確認用の作業領域())
         }
         保管先の指定::ローカルディレクトリ { ルートディレクトリ } => {
             ローカル保管先の書き込み確認::生成する(ローカル保管先ルートディレクトリ::生成する(ルートディレクトリ.パス()))
