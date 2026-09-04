@@ -34,7 +34,42 @@ v1を実装中である。仕様の正本は
 cargo xtask verify
 ```
 
-利用者向けの導入手順は Issue #8 の完了時に本節へ追記する。
+### 実行ファイルの配置
+
+`target/debug/`の実行ファイルは`cargo clean`で消え、`--release`へ切り替えると別の場所になる。
+日常使う実行ファイルは`cargo xtask install-binary`で`target/`の外へ配置する。
+
+```powershell
+# 実行場所: リポジトリルート
+cargo xtask install-binary
+```
+
+このコマンドはreleaseプロファイルでビルドし、Cargoの`bin`ディレクトリ（`CARGO_HOME`が
+設定されていればその`bin`、無ければホームディレクトリの`.cargo/bin`）へ実行ファイルを置き、
+配置先の絶対パスを標準出力へ出す。rustupでRustを導入していればこのディレクトリはPATHに
+通っている。通っていない場合は、その旨と対処をコマンドが案内する。**PATHの書き換えは行わない。**
+環境変数の変更は他のソフトへ影響し、元へ戻す手段を利用者が持たないためである。
+
+既に同名の実行ファイルがあれば上書きする。Windowsで動作中のためそのまま上書きできない場合は、
+既存を`git-lfs-rclone-storage.previous`へ改名してから配置し、改名したファイルの削除まで試みる。
+
+### 導入の流れ
+
+```powershell
+# 1. 実行場所: このリポジトリのルート
+cargo xtask install-binary
+
+# 2〜4. 実行場所: 大容量資産を置きたい対象のGitリポジトリのルート
+git-lfs-rclone-storage install
+git-lfs-rclone-storage init-project --profile <論理プロファイル名>
+git-lfs-rclone-storage doctor
+```
+
+`install`は`--path`を省略すると、現在実行中の実行ファイル自身の絶対パスをGit設定へ登録する。
+そのため配置先の実行ファイルから`install`を実行すれば、安定した絶対パスが登録される。
+PATHが通っていない場合は`git-lfs-rclone-storage install --path <配置先>`の形で明示する。
+
+PC設定（`config.toml`）の置き場所と内容は`doctor`が報告する。
 
 ## 保管先の種類
 
