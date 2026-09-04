@@ -1,129 +1,95 @@
 # git-lfs-rclone-storage
 
-複数のPCと複数のGitリポジトリで共用する、大容量バイナリ資産の保管基盤。
+複数のPCと複数のGitリポジトリで共用する、大容量バイナリ資産の保管基盤である。
 
-Git LFS（Git Large File Storage。大容量ファイルの実体の代わりに参照情報をGitへ記録する仕組み）の
-standalone custom transfer agentとして動作し、rclone経由で外部保管先へオブジェクトを保存・取得する。
-初期の保管先はGoogle Driveである。
+Git LFS（Git Large File Storage。大容量ファイルの実体の代わりに参照情報をGitへ記録する仕組み）の standalone custom transfer agent として動作し、マウント済みのクラウドストレージ、または rclone 経由の外部保管先へオブジェクトを保存・取得する。
+
+## 仕組みの概略
 
 ```text
-各Gitリポジトリ（.gitattributes と Git LFS pointer）
+各Gitリポジトリ（.gitattributes と Git LFS pointer をコミットする）
   ↓
-git-lfs-rclone-storage（custom transfer agent）
+git-lfs-rclone-storage（custom transfer agent。Git LFS が引数なしで起動する）
   ↓
-rclone
+マウント済みのローカルパス、または rclone
   ↓
-Google Drive、または別のrclone対応先
+Google Drive、または別の保管先
 ```
 
-利用側のプロジェクトがコミットするのは`.gitattributes`と`.large-assets.toml`（スキーマ版と
-論理プロファイル名だけ）である。Google Drive、認証トークン、PC固有のパスをプロジェクトは知らない。
+利用側のプロジェクトがコミットするのは `.gitattributes` と `.large-assets.toml`（スキーマ版と論理プロファイル名だけ）の2ファイルである。**保管先の絶対パス、rcloneのリモート名、認証トークンをプロジェクトは知らない。** 保管先の実体はPCごとの設定だけが持ち、プロジェクトは論理プロファイル名でその設定を参照する。この分離により、2台のPCで保管先の指定が違っていても同じリポジトリを共有できる。
+
+## 目的別の入口
+
+| やりたいこと | 読む文書 |
+|---|---|
+| はじめてこのPCへ導入する | [_doc/利用/PC初期設定.md](_doc/利用/PC初期設定.md) |
+| 新しいGitリポジトリで使う | [_doc/利用/プロジェクト導入.md](_doc/利用/プロジェクト導入.md) |
+| 普段使う。cloneやpushで何が起きるかを知る | [_doc/利用/日常操作.md](_doc/利用/日常操作.md) |
+| 失敗した。エラーコードを引く | [_doc/利用/トラブルシューティング.md](_doc/利用/トラブルシューティング.md) |
+| このリポジトリのコードを変更する | [_doc/設計/アーキテクチャ.md](_doc/設計/アーキテクチャ.md) と [_doc/設計/コード分割規約.md](_doc/設計/コード分割規約.md) |
+
+導入は「PC初期設定 → プロジェクト導入」の順に行う。PC初期設定はPCごとに1回、プロジェクト導入はGitリポジトリごとに1回である。
 
 ## 状態
 
-v1を実装中である。仕様の正本は
-[Issue #2](https://github.com/megaDenryu/git-lfs-rclone-storage/issues/2)、
-実装のIssueは #3 から #8 である。
+v1を実装中である。仕様の正本は [Issue #2](https://github.com/megaDenryu/git-lfs-rclone-storage/issues/2)、実装のIssueは #3 から #8 である。
 
-## 使い方
+## 開発者向けのツールの入口
 
 `cargo xtask` が唯一のツール入口である。引数なしで実行するとコマンドの一覧が出る。
 
 ```powershell
 # 実行場所: リポジトリルート
-cargo xtask verify
+cargo xtask
+cargo xtask verify              # cargo check -> clippy -D warnings -> cargo test
+cargo xtask check-line-count    # 100行原則と例外台帳で.rsファイルを検査する
+cargo xtask check-v1-acceptance # v1受入条件1〜9番を実git/git-lfs/rcloneで実証する
+cargo xtask install-binary      # releaseビルドし、Cargoのbinディレクトリへ実行ファイルを配置する
 ```
 
-### 実行ファイルの配置
-
-`target/debug/`の実行ファイルは`cargo clean`で消え、`--release`へ切り替えると別の場所になる。
-日常使う実行ファイルは`cargo xtask install-binary`で`target/`の外へ配置する。
-
-```powershell
-# 実行場所: リポジトリルート
-cargo xtask install-binary
-```
-
-このコマンドはreleaseプロファイルでビルドし、Cargoの`bin`ディレクトリ（`CARGO_HOME`が
-設定されていればその`bin`、無ければホームディレクトリの`.cargo/bin`）へ実行ファイルを置き、
-配置先の絶対パスを標準出力へ出す。rustupでRustを導入していればこのディレクトリはPATHに
-通っている。通っていない場合は、その旨と対処をコマンドが案内する。**PATHの書き換えは行わない。**
-環境変数の変更は他のソフトへ影響し、元へ戻す手段を利用者が持たないためである。
-
-既に同名の実行ファイルがあれば上書きする。Windowsで動作中のためそのまま上書きできない場合は、
-既存を`git-lfs-rclone-storage.previous`へ改名してから配置し、改名したファイルの削除まで試みる。
-
-### 導入の流れ
-
-```powershell
-# 1. 実行場所: このリポジトリのルート
-cargo xtask install-binary
-
-# 2〜4. 実行場所: 大容量資産を置きたい対象のGitリポジトリのルート
-git-lfs-rclone-storage install
-git-lfs-rclone-storage init-project --profile <論理プロファイル名>
-git-lfs-rclone-storage doctor
-```
-
-`install`は`--path`を省略すると、現在実行中の実行ファイル自身の絶対パスをGit設定へ登録する。
-そのため配置先の実行ファイルから`install`を実行すれば、安定した絶対パスが登録される。
-PATHが通っていない場合は`git-lfs-rclone-storage install --path <配置先>`の形で明示する。
-
-PC設定（`config.toml`）の置き場所と内容は`doctor`が報告する。
+`cargo xtask install-binary` の詳しい動作と、実行ファイルを `target/` の外へ置く理由は [_doc/利用/PC初期設定.md](_doc/利用/PC初期設定.md) の手順5にある。
 
 ## 保管先の種類
 
-PC設定（`config.toml`）のプロファイルごとに、保管先へどう書くかを`storage`キーで選ぶ。
-`storage`を省略したプロファイルは、従来どおりrcloneを子プロセスとして起動する方式として扱う。
+PC設定（`config.toml`）のプロファイルごとに、保管先へどう書くかを `storage` キーで選ぶ。`storage` を省略したプロファイルは、rcloneを子プロセスとして起動する方式として扱う。
 
 | `storage` | 何をするか | 必要なキー | 書いてはならないキー |
 |---|---|---|---|
-| `rclone`（省略時の既定） | rcloneを子プロセスとして起動し、リモートへ転送する | `rclone_remote`, `base_path`, `transfer_timeout_seconds`（`rclone_executable`は任意） | なし |
 | `local` | 標準ライブラリのファイル操作だけで、マウント済みのローカルパスへ転送する | `base_path` | `rclone_remote`, `rclone_executable`, `transfer_timeout_seconds` |
+| `rclone`（省略時の既定） | rcloneを子プロセスとして起動し、リモートへ転送する | `rclone_remote`, `base_path`, `transfer_timeout_seconds`（`rclone_executable`は任意） | なし |
 
-`local`は、Google Driveのデスクトップアプリのようにクラウドストレージがドライブとして
-マウントされている場合に選ぶ。転送1件ごとのrcloneの起動（存在確認・転送・最終化で最大4回）が
-無くなる。`base_path`はマウント済みの絶対パスを
-書き、保管先のディレクトリ構成は`rclone`方式と同じである
-（`<base_path>/lfs/objects/sha256/<先頭2文字>/<次の2文字>/<oid>`）。
+`local` は、Google Drive for Desktop のようにクラウドストレージがドライブとしてマウントされている場合に選ぶ。転送1件ごとのrcloneの起動（存在確認・転送・最終化で最大4回）が無くなる。`base_path` にはマウント済みの絶対パスを書き、保管先のディレクトリ構成は `rclone` 方式と同じである（`<base_path>/lfs/objects/sha256/<先頭2文字>/<次の2文字>/<oid>`）。
 
-`base_path`が指すディレクトリが存在しないときは、`init`と`doctor`が明示的に失敗する。
-ドライブがマウントされていない状態で転送を始め、実体がローカルディスクへ溜まるのを防ぐためである。
+`base_path` が指すディレクトリが存在しないときは、`init` と `doctor` が明示的に失敗する。ドライブがマウントされていない状態で転送を始め、実体がローカルディスクへ溜まるのを防ぐためである。
 
-```toml
-schema_version = 1
-
-[profiles.personal-large-assets]
-storage = "local"
-base_path = "G:/マイドライブ/git-lfs-rclone-storage"
-```
+2つの方式の使い分けは [_doc/利用/PC初期設定.md](_doc/利用/PC初期設定.md) の「2つの方式の違い」にある。
 
 ## ダウンロードの一時ファイルの置き場所
 
-agentはダウンロードした実体をいったん一時ファイルへ書き、そのパスをGit LFSへ渡す。Git LFSは
-そのファイルの所有権を受け取り、リポジトリの`.git/lfs/objects/`へ`rename`で移す。`rename`は
-ボリュームをまたげないため、一時ファイルは必ずリポジトリと同じボリュームに無ければならない。
+agentはダウンロードした実体をいったん一時ファイルへ書き、そのパスを Git LFS へ渡す。Git LFS はそのファイルの所有権を受け取り、リポジトリの `.git/lfs/objects/` へ `rename` で移す。`rename` はボリュームをまたげないため、一時ファイルは必ずリポジトリと同じボリュームに無ければならない。
 
-そのため置き場所はPC設定ではなくリポジトリから決める。`git`へ問い合わせたGit LFSの保管
-ディレクトリ（既定は`<Gitディレクトリ>/lfs`、Git設定`lfs.storage`があればそれ）の下の
-`tmp/rclone-storage-agent`である。利用者が指定する項目は無い。
+そのため置き場所はPC設定ではなくリポジトリから決める。`git` へ問い合わせた Git LFS の保管ディレクトリ（既定は `<Gitディレクトリ>/lfs`、Git設定 `lfs.storage` があればそれ）の下の `tmp/rclone-storage-agent` である。利用者が指定する項目は無い。
 
-PC設定の`temp_directory`はこの決定により読まれなくなった。既存の設定ファイルを壊さないため
-記述は受理し続けるが、値は使わない。`doctor`が残っていることを注記するので、見つけたら削除
-してよい。
+PC設定の `temp_directory` はこの決定により読まれなくなった。既存の設定ファイルを壊さないため記述は受理し続けるが、値は使わない。`doctor` が残っていることを注記するので、見つけたら削除してよい。
 
 ## 文書一覧（生存型）
 
-常に実装と一致させる義務がある文書。ここに無い設計文書は正典ではない。
+常に実装と一致させる義務がある文書である。ここに無い文書は正典ではない。
 
 | 文書 | 内容 |
 |---|---|
+| [_doc/利用/PC初期設定.md](_doc/利用/PC初期設定.md) | PCごとに1回行う導入。保管先の選択と変更、rcloneを使う場合 |
+| [_doc/利用/プロジェクト導入.md](_doc/利用/プロジェクト導入.md) | Gitリポジトリごとに1回行う導入。コミットするファイル、初回clone |
+| [_doc/利用/日常操作.md](_doc/利用/日常操作.md) | clone・checkout・pull・pushで何が起きるか、複数PC、offline |
+| [_doc/利用/トラブルシューティング.md](_doc/利用/トラブルシューティング.md) | `doctor`の読み方、エラーコード対応表、`doctor`では検出できない失敗 |
 | [_doc/設計/アーキテクチャ.md](_doc/設計/アーキテクチャ.md) | 層の定義、依存の向き、主要な設計判断 |
 | [_doc/設計/コード分割規約.md](_doc/設計/コード分割規約.md) | 役割語彙、昇格経路、規範実装の指名 |
 | [_doc/設計/行数の例外台帳.md](_doc/設計/行数の例外台帳.md) | コード行100行の超過を許したファイルの登録簿 |
 | [CLAUDE.md](CLAUDE.md) | ツールの入口、文書の置き場所、命名、標準出力の規律 |
 
 `_doc/開発スレッド/` はログ型（追記のみ）であり、索引への登録を要しない。
+
+エラーコード対応表の正本は [_doc/利用/トラブルシューティング.md](_doc/利用/トラブルシューティング.md) にある。実装の正本は `lfs-rclone-protocol` の `error_code.rs` である。
 
 ## 採用ライブラリ
 
@@ -138,32 +104,3 @@ PC設定の`temp_directory`はこの決定により読まれなくなった。�
 | thiserror | エラー型の定義 | 導出マクロのみ。実行時の振る舞いを持たない |
 | directories | OSごとの設定ディレクトリの解決 | OSの慣習は第一原理から導出できない蓄積知識である |
 | tempfile | テストの隔離ディレクトリ | テスト専用。本体の振る舞いに関わらない |
-
-## エラーコード対応表
-
-Git LFS custom transfer protocolは`error.code`の値域を定めていない。本リポジトリでの割り当てを
-ここへ固定する（Issue #2 10節、`lfs-rclone-protocol`の`error_code.rs`が実装の正本）。`init`の
-`error`応答、および`upload`・`download`の`complete`応答に含まれる`error`のどちらでも、`code`は
-この表のいずれかの値になる。
-
-| コード | 意味 | 利用者が取るべき対処 |
-|---|---|---|
-| 1 | プロジェクト設定（`.large-assets.toml`）が見つからない | Git作業ツリーのルートに`.large-assets.toml`があるか確認する |
-| 2 | PC設定が見つからない | 導入手順に従ってPC設定（`config.toml`）を作成する |
-| 3 | PC設定を置くべき標準ディレクトリを特定できない | OS環境を確認する。通常は起きない |
-| 4 | 設定ファイル（プロジェクト設定またはPC設定）の解析に失敗した | TOMLの構文とキー名を確認する |
-| 5 | 設定のスキーマ版が対応していない | agentの版と設定ファイルの`schema_version`を合わせる |
-| 6 | プロジェクトが参照する論理プロファイルがPC設定に未定義 | PC設定へ該当プロファイルを追加する |
-| 7 | 設定ファイルの読み込み（ファイルI/O）に失敗した | ファイルの権限・破損を確認する |
-| 8 | `init`時、rclone実行ファイルを起動できない。PC設定`rclone_executable`が指すパスが明示されている場合、またはPATH解決に委ねている場合のどちらでも起こる | 明示していた場合はそのパスを確認する。PATH解決に委ねていた場合はrcloneを導入するか、PC設定`rclone_executable`でパスを明示する |
-| 9 | 保管操作の設定不備（rcloneリモート名・保管先基底パスが不正等） | PC設定の該当プロファイルを確認する |
-| 10 | `init`時、rclone実行ファイルの起動確認（コード8の確認）を通過した後、リモートへの問い合わせ（存在確認）に失敗した | rclone自身の設定・認証情報を確認する |
-| 11 | オブジェクトが保管先に存在しない | 保管先へ実体がアップロード済みか確認する |
-| 12 | oidが64文字の小文字16進文字列として不正 | Git LFS側の破損を疑い、再取得する |
-| 13 | 保存済みまたはダウンロード後のバイト数が要求と食い違う | 保管先の内容が破損していないか確認する |
-| 14 | ダウンロード後のSHA-256がoidと食い違う | 保管先の内容が破損していないか確認する。再ダウンロードしても直らなければ保管先を調査する |
-| 15 | ローカル一時ディレクトリの作成・読み書きに失敗した | リポジトリのGitディレクトリへの書き込み権限と空き容量を確認する |
-| 16 | rcloneの子プロセス実行に失敗した（起動不能・非0終了・タイムアウトのいずれか） | rclone実行ファイルの状態、`transfer_timeout_seconds`、rclone側のログを確認する |
-| 17 | stdinの1行がJSONとして解析できない | agentを起動しているGit LFSの版を確認する。通常は起きない |
-| 18 | 未知の`event`を受け取った | agentを起動しているGit LFSの版を確認する。通常は起きない |
-| 19 | 必須フィールドの欠落または不正（`init`の`operation`、`upload`/`download`の`oid`欠落等） | agentを起動しているGit LFSの版を確認する。通常は起きない |
