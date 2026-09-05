@@ -8,14 +8,19 @@
 use std::path::PathBuf;
 use std::process::Command;
 
+use crate::work_tree_root::作業ツリールート;
+
 pub(crate) enum Gitコマンドの実行場所 {
     現在地,
     指定ディレクトリ(PathBuf),
 }
 
 impl Gitコマンドの実行場所 {
-    pub(crate) fn 指定ディレクトリから生成する(ディレクトリ: impl Into<PathBuf>) -> Self {
-        Self::指定ディレクトリ(ディレクトリ.into())
+    /// 作業ツリーのルートを`git`の実行場所にする。ディレクトリを裸のパスで受けず、
+    /// どこを指しているかが型で分かる形にする（グローバルCLAUDE.md「プリミティブ執着禁止は
+    /// パス・テキスト・名前にも適用する」）。
+    pub(crate) fn 作業ツリールートから生成する(ルート: &作業ツリールート) -> Self {
+        Self::指定ディレクトリ(ルート.パス().to_path_buf())
     }
 
     /// 組み立て途中の`git`コマンドへ実行場所を反映する。現在地の場合は何もせず、

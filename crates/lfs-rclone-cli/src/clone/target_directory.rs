@@ -5,6 +5,7 @@
 use std::path::{Path, PathBuf};
 
 use crate::clone::source_url::複製元リポジトリURL;
+use crate::work_tree_root::作業ツリールート;
 
 #[repr(transparent)]
 pub(crate) struct 複製先ディレクトリ(PathBuf);
@@ -29,5 +30,12 @@ impl 複製先ディレクトリ {
     /// 利用者へ示すための表記。
     pub(crate) fn 表示用の綴り(&self) -> String {
         self.0.display().to_string()
+    }
+
+    /// `git clone`が成功した後の姿へ変換する。複製先は「これから作る場所」であり、
+    /// 複製が成功して初めて作業ツリーのルートになる。この時間の違いを型で分けるため、
+    /// 変換を経ずに複製先をそのまま作業ツリーとして扱わせない。
+    pub(crate) fn 作業ツリールートへ変換する(&self) -> 作業ツリールート {
+        作業ツリールート::生成する(self.0.clone())
     }
 }
