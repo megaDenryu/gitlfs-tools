@@ -7,6 +7,8 @@
 //! （CLAUDE.md「標準出力の規律」）。引数なしの起動だけがプロトコル通信であり、
 //! この分岐（`launch_mode`）を変えるとGit LFSとの通信経路が壊れる。
 
+mod check_objects_command;
+mod check_objects_output;
 mod child_process_exit_code;
 mod command_error;
 mod config_diagnostic;
@@ -18,10 +20,12 @@ mod doctor_scratch_directory;
 mod download_temp_directory_diagnostic;
 mod git_attributes_diagnostic;
 mod git_hook_directory;
+mod git_lfs_file_listing;
 mod git_lfs_filter_diagnostic;
 mod git_lfs_hook;
 mod git_lfs_hook_diagnostic;
 mod git_lfs_installation_diagnostic;
+mod git_lfs_ls_files_json;
 mod git_lfs_storage_directory;
 mod git_repository;
 mod git_transfer_diagnostic;
@@ -32,6 +36,7 @@ mod install_target_path;
 mod launch_argument_error;
 mod launch_mode;
 mod local_storage_write_probe;
+mod object_check_scope;
 mod object_storage_selection;
 mod pc_config_location_resolution;
 mod project_config_template;
@@ -40,8 +45,10 @@ mod storage_assembly;
 mod storage_reachability_diagnostic;
 mod storage_write_diagnostic;
 mod storage_write_probe;
+mod stored_object_count_diagnostic;
 mod subcommand;
 mod temp_directory_provisioning;
+mod tracked_lfs_file;
 mod timeout_process_runner;
 mod transfer_init_boundary;
 mod transfer_session;
@@ -68,6 +75,7 @@ fn main() -> ExitCode {
         Ok(起動モード::サブコマンド実行(サブコマンド::導入 { 実行ファイルパス })) => install_command::導入を実行する(実行ファイルパス),
         Ok(起動モード::サブコマンド実行(サブコマンド::雛形生成 { プロファイル })) => init_project_command::雛形生成を実行する(プロファイル),
         Ok(起動モード::サブコマンド実行(サブコマンド::検証)) => doctor_command::検証を実行する(),
+        Ok(起動モード::サブコマンド実行(サブコマンド::保管先の点検 { 範囲 })) => check_objects_command::保管先の点検を実行する(範囲),
         Ok(起動モード::サブコマンド実行(サブコマンド::ヘルプ)) => {
             println!("{使い方テキスト}");
             ExitCode::SUCCESS

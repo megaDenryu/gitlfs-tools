@@ -15,6 +15,8 @@ lfs-rclone-transfer.workspace = true
 lfs-rclone-rclone.workspace = true
 lfs-rclone-local.workspace = true
 lfs-rclone-protocol.workspace = true
+serde.workspace = true
+serde_json.workspace = true
 thiserror.workspace = true
 
 [dev-dependencies]

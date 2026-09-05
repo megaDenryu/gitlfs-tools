@@ -7,7 +7,7 @@
 use lfs_rclone_domain::{一時ファイルパス, オブジェクト状態, オブジェクト識別子, 保管エラー, 期待バイト数, 検証済みローカルファイル};
 use lfs_rclone_local::ローカルディレクトリ保管庫;
 use lfs_rclone_rclone::Rclone保管庫;
-use lfs_rclone_storage_port::{アップロード結果, オブジェクト保管庫};
+use lfs_rclone_storage_port::{アップロード結果, オブジェクト保管庫, 保管オブジェクト総数};
 
 pub(crate) enum 選択された保管庫 {
     Rclone子プロセス(Rclone保管庫),
@@ -19,6 +19,13 @@ impl オブジェクト保管庫 for 選択された保管庫 {
         match self {
             Self::Rclone子プロセス(保管庫) => 保管庫.存在を確認する(識別子, 期待バイト数),
             Self::ローカルディレクトリ(保管庫) => 保管庫.存在を確認する(識別子, 期待バイト数),
+        }
+    }
+
+    fn 保管しているオブジェクトの総数を数える(&self) -> Result<保管オブジェクト総数, 保管エラー> {
+        match self {
+            Self::Rclone子プロセス(保管庫) => 保管庫.保管しているオブジェクトの総数を数える(),
+            Self::ローカルディレクトリ(保管庫) => 保管庫.保管しているオブジェクトの総数を数える(),
         }
     }
 

@@ -5,11 +5,13 @@ use lfs_rclone_domain::プロファイル名;
 
 use crate::install_target_path::登録する実行ファイルパス;
 use crate::launch_argument_error::起動引数エラー;
+use crate::object_check_scope::点検範囲;
 
 pub(crate) enum サブコマンド {
     導入 { 実行ファイルパス: Option<登録する実行ファイルパス> },
     雛形生成 { プロファイル: プロファイル名 },
     検証,
+    保管先の点検 { 範囲: 点検範囲 },
     ヘルプ,
 }
 
@@ -19,6 +21,7 @@ impl サブコマンド {
             "install" => 導入引数を解釈する(残り引数),
             "init-project" => 雛形生成引数を解釈する(残り引数),
             "doctor" => 引数なしを確かめる(名前, 残り引数).map(|()| Self::検証),
+            "check-objects" => 点検引数を解釈する(残り引数),
             "help" | "--help" | "-h" => 引数なしを確かめる(名前, 残り引数).map(|()| Self::ヘルプ),
             他 => Err(起動引数エラー::未知のサブコマンド { 名前: 他.to_owned() }),
         }
@@ -30,6 +33,19 @@ fn 引数なしを確かめる(名前: &str, 残り引数: &[String]) -> Result<
         None => Ok(()),
         Some(余分) => Err(起動引数エラー::未知の引数 { サブコマンド: 名前.to_owned(), 名前: 余分.clone() }),
     }
+}
+
+/// `check-objects`の引数は`--all`の有無だけである。指定が無ければ現在のチェックアウトを
+/// 点検する。
+fn 点検引数を解釈する(引数: &[String]) -> Result<サブコマンド, 起動引数エラー> {
+    let mut 範囲 = 点検範囲::現在のチェックアウト;
+    for 項目 in 引数 {
+        match 項目.as_str() {
+            "--all" => 範囲 = 点検範囲::全履歴,
+            他 => return Err(起動引数エラー::未知の引数 { サブコマンド: "check-objects".to_owned(), 名前: 他.to_owned() }),
+        }
+    }
+    Ok(サブコマンド::保管先の点検 { 範囲 })
 }
 
 fn 導入引数を解釈する(引数: &[String]) -> Result<サブコマンド, 起動引数エラー> {

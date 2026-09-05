@@ -1,4 +1,4 @@
-//! `install`・`init-project`・`doctor`が実行時に返す失敗の分類。
+//! `install`・`init-project`・`doctor`・`check-objects`が実行時に返す失敗の分類。
 //! 「エラー分類」役割のファイルである（コード分割規約.md 1節）。
 
 #[derive(Debug, thiserror::Error)]
@@ -20,4 +20,16 @@ pub(crate) enum コマンド実行エラー {
 
     #[error("プロジェクト設定ファイルの書き込みに失敗しました: {説明}")]
     プロジェクト設定ファイル書き込み失敗 { 説明: String },
+
+    #[error("設定を解決できませんでした: {説明}")]
+    設定の解決失敗 { 説明: String },
+
+    #[error("保管先を準備できませんでした: {説明}")]
+    保管先の準備失敗 { 説明: String },
+
+    #[error("保管先の点検に失敗しました: {説明}")]
+    保管先の点検失敗 { 説明: String },
+
+    #[error("git lfs ls-filesの実行に失敗しました: {説明}")]
+    GitLFSの一覧取得失敗 { 説明: String },
 }

@@ -8,16 +8,24 @@
 //! （コード分割規約.md 1節「命名」）。
 
 mod asset_transfer_service;
+mod audit_report;
+mod audit_target_object;
 mod download_completion;
 mod download_request;
+mod missing_object;
+mod object_presence_audit_service;
 mod object_state_consistency;
 mod temp_file_cleanup;
 mod upload_completion;
 mod upload_request;
 
 pub use asset_transfer_service::資産転送サービス;
+pub use audit_report::点検報告;
+pub use audit_target_object::点検対象オブジェクト;
 pub use download_completion::ダウンロード完了;
 pub use download_request::ダウンロード要求;
+pub use missing_object::{欠落オブジェクト, 欠落の事由};
+pub use object_presence_audit_service::保管先オブジェクト在否点検サービス;
 pub use upload_completion::アップロード完了;
 pub use upload_request::アップロード要求;
 

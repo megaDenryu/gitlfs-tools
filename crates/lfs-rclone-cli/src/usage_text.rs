@@ -25,6 +25,12 @@ git-lfs-rclone-storage - Git LFS custom transfer agent
   git-lfs-rclone-storage doctor
       現在のリポジトリとPCの設定が揃っているかを確かめ、不足を報告する。
 
+  git-lfs-rclone-storage check-objects [--all]
+      Git LFSが参照するオブジェクトが保管先に実在するかを突き合わせ、欠けているものを
+      一覧で示す。--allを付けると全履歴(過去の版を含む)を対象にする。
+      保管先に在るがGit LFSが参照しないオブジェクトは、他のリポジトリが置いたものであり
+      正常なため報告しない。
+
   git-lfs-rclone-storage help
       この使い方を表示する。
 ";

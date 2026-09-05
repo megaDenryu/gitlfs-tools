@@ -14,7 +14,7 @@ use crate::working_directory_resolution::作業ディレクトリを解決する
 use crate::{
     config_diagnostic, deprecated_setting_diagnostic, download_temp_directory_diagnostic, git_attributes_diagnostic,
     git_lfs_filter_diagnostic, git_lfs_hook_diagnostic, git_lfs_installation_diagnostic, git_transfer_diagnostic,
-    storage_reachability_diagnostic, storage_write_diagnostic,
+    storage_reachability_diagnostic, storage_write_diagnostic, stored_object_count_diagnostic,
 };
 
 pub(crate) fn 検証を実行する() -> ExitCode {
@@ -57,6 +57,7 @@ fn 診断結果を集める() -> Vec<診断結果> {
     結果一覧.push(download_temp_directory_diagnostic::診断する(&起点));
     結果一覧.push(deprecated_setting_diagnostic::診断する(設定診断.プロファイル.as_ref()));
     結果一覧.push(storage_write_diagnostic::診断する(設定診断.プロファイル.as_ref()));
+    結果一覧.push(stored_object_count_diagnostic::診断する(設定診断.プロファイル.as_ref()));
 
     let リポジトリ検出結果 = Gitリポジトリ::現在地から検出する();
     結果一覧.push(git_transfer_diagnostic::診断する(リポジトリ検出結果.as_ref()));

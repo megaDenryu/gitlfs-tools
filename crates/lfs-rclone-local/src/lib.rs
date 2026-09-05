@@ -13,6 +13,7 @@
 //! （コード分割規約.md 1節「命名」）。
 
 mod local_directory_storage;
+mod local_object_directory;
 mod local_object_file_path;
 mod local_storage_root;
 mod upload_placement;

@@ -58,3 +58,25 @@ fn 保管先ルートが存在しなければ対処とともに不足を報告�
     assert!(!結果.成功したか, "不足があるときのdoctorは失敗として終わるべき");
     Ok(())
 }
+
+#[test]
+fn 保管先のオブジェクト数を情報として表示し合否には数えない() -> Result<(), Box<dyn std::error::Error>> {
+    let 保管先ルート = tempfile::tempdir()?;
+    let 一時ディレクトリ = tempfile::tempdir()?;
+    let 作業ツリー = common::fixtures::プロジェクト作業ツリーを作る("doctor-count")?;
+    let pc設定 = common::fixtures::ローカル方式のpc設定ディレクトリを作る("doctor-count", 保管先ルート.path(), 一時ディレクトリ.path())?;
+    let 置き場 = 保管先ルート.path().join("lfs").join("objects").join("sha256").join("ab").join("cd");
+    std::fs::create_dir_all(&置き場)?;
+    std::fs::write(置き場.join("既に置かれているオブジェクト"), b"stored by some repository")?;
+
+    let 結果 = doctorを実行する(作業ツリー.path(), pc設定.path())?;
+
+    assert!(
+        結果.標準出力.contains("[情報] 保管先にあるオブジェクトの数: 1件"),
+        "オブジェクト数を[情報]として表示するべき: {}",
+        結果.標準出力
+    );
+    assert!(結果.標準出力.contains("他のリポジトリが置いた分を含む"), "共用の保管先全体を数えていることを示すべき: {}", 結果.標準出力);
+    assert!(!結果.標準出力.contains("[OK] 保管先にあるオブジェクトの数"), "判定していない項目を[OK]として出してはならない: {}", 結果.標準出力);
+    Ok(())
+}

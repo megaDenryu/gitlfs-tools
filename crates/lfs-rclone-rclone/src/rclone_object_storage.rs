@@ -6,11 +6,12 @@ use lfs_rclone_domain::{
     一時ファイルパス, オブジェクト状態, オブジェクト識別子, 保管エラー, 保管先基底パス, 整合性エラー, 期待バイト数, Rclone実行ファイルの場所,
     Rcloneリモート名, 検証済みローカルファイル, 転送タイムアウト,
 };
-use lfs_rclone_storage_port::{アップロード結果, オブジェクト保管庫};
+use lfs_rclone_storage_port::{アップロード結果, オブジェクト保管庫, 保管オブジェクト総数};
 
 use crate::download_transfer;
 use crate::existence_query;
 use crate::finalize_transfer;
+use crate::object_count_query;
 use crate::rclone_process_runner::Rcloneプロセス実行器;
 use crate::upload_transfer;
 
@@ -42,6 +43,11 @@ impl オブジェクト保管庫 for Rclone保管庫 {
         let パス = self.基底パス.オブジェクトパスを求める(識別子);
         let 実測 = existence_query::最終オブジェクトの存在を問い合わせる(&self.実行器, &self.リモート名, &パス)?;
         Ok(状態を判定する(実測, 期待バイト数))
+    }
+
+    fn 保管しているオブジェクトの総数を数える(&self) -> Result<保管オブジェクト総数, 保管エラー> {
+        let 置き場 = self.基底パス.オブジェクト置き場のパスを求める();
+        object_count_query::保管先のオブジェクト総数を問い合わせる(&self.実行器, &self.リモート名, &置き場)
     }
 
     fn アップロードする(&self, 識別子: &オブジェクト識別子, 転送元: &検証済みローカルファイル) -> Result<アップロード結果, 保管エラー> {

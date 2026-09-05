@@ -8,6 +8,7 @@
 mod download_transfer;
 mod existence_query;
 mod finalize_transfer;
+mod object_count_query;
 mod rclone_execution_error;
 mod rclone_object_storage;
 mod rclone_operation;
