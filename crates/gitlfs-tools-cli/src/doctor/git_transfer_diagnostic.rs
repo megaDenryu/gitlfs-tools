@@ -1,12 +1,12 @@
 //! `doctor`がGit側のcustom transfer設定を検査する。`install`が書き込む4キー
 //! （`git_transfer_settings.rs`参照）の存在だけを確認し、値の突き合わせはしない
 //! （値の是正は`install`の再実行そのもので直るため、doctorは「登録済みか」だけを見る）。
-//! Gitリポジトリの検出は`doctor_command`が1回だけ行い、この関数はその結果を受け取る
+//! Gitリポジトリの検出は`doctor::command`が1回だけ行い、この関数はその結果を受け取る
 //! （グローバルCLAUDE.md「暗黙のグローバル依存を関数の奥で直叩きしない」。境界を
 //! 呼び出し元へ1箇所集約する）。
 
 use crate::command_error::コマンド実行エラー;
-use crate::diagnostic_finding::診断結果;
+use crate::doctor::finding::診断結果;
 use crate::git_repository::Gitリポジトリ;
 use crate::git_transfer_settings::設定キー一覧;
 

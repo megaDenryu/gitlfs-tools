@@ -6,9 +6,12 @@ gitlfs-tools - Git LFS custom transfer agent
 引数なしで起動すると、Git LFSとのプロトコル通信を1行1JSONで行う。
 
 導入の流れ:
-  1. このリポジトリのソースで cargo xtask install-binary を実行する。
+  1. 実行ファイルを、cargo cleanや一時ファイルの掃除で消えない場所へ置く。
+     開発しないPCは GitHub の Releases から gitlfs-tools-windows-x86_64.exe を取得し、
+     gitlfs-tools.exe という名前へ変えて置く。
+     このリポジトリのソースを持つPCは cargo xtask install-binary を実行する。
      releaseビルドした実行ファイルがCargoのbinディレクトリへ置かれ、そのパスが表示される。
-  2. 表示されたパスのこの実行ファイルから、対象のGitリポジトリで install を実行する。
+  2. 1で置いた実行ファイルから、対象のGitリポジトリで install を実行する。
      --path省略時は現在実行中の実行ファイル自身のパスを登録するため、配置先が登録される。
   3. 対象リポジトリで init-project を実行し、最後に doctor で不足を確かめる。
 
@@ -37,6 +40,10 @@ gitlfs-tools - Git LFS custom transfer agent
       git cloneの他の引数(--branch・--depth等)は通さない。それらが要る場合は
       _doc/利用/プロジェクト導入.mdに残した従来の4手順を使う。
       途中で失敗しても、複製した作業ツリーは消さずに残す。
+
+  gitlfs-tools version
+      この実行ファイルの版を`gitlfs-tools 1.0.0`の形で1行表示する。
+      2台のPCへ同じ版を入れたかどうかは、この出力か、doctorの先頭行で見比べる。
 
   gitlfs-tools help
       この使い方を表示する。

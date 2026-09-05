@@ -6,7 +6,7 @@
 
 use std::path::Path;
 
-use crate::diagnostic_finding::診断結果;
+use crate::doctor::finding::診断結果;
 use crate::git_lfs_storage_directory::GitLFS保管ディレクトリ;
 use crate::temp_directory_provisioning::一時保存先を作成する;
 

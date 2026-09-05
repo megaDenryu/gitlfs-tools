@@ -7,14 +7,14 @@
 
 use std::process::ExitCode;
 
-use crate::diagnostic_finding::診断結果;
+use crate::doctor::finding::診断結果;
 use crate::git_repository::Gitリポジトリ;
 use crate::pc_config_location_resolution::pc設定の場所を解決する;
 use crate::working_directory_resolution::作業ディレクトリを解決する;
-use crate::{
+use crate::doctor::{
     config_diagnostic, deprecated_setting_diagnostic, download_temp_directory_diagnostic, git_attributes_diagnostic,
     git_lfs_filter_diagnostic, git_lfs_hook_diagnostic, git_lfs_installation_diagnostic, git_transfer_diagnostic,
-    storage_reachability_diagnostic, storage_write_diagnostic, stored_object_count_diagnostic,
+    program_version_diagnostic, storage_reachability_diagnostic, storage_write_diagnostic, stored_object_count_diagnostic,
 };
 
 pub(crate) fn 検証を実行する() -> ExitCode {
@@ -31,7 +31,7 @@ pub(crate) fn 検証を実行する() -> ExitCode {
 }
 
 fn 診断結果を集める() -> Vec<診断結果> {
-    let mut 結果一覧 = Vec::new();
+    let mut 結果一覧 = vec![program_version_diagnostic::この実行ファイルの版を診断する()];
     結果一覧.push(git_lfs_installation_diagnostic::git_lfsの導入を診断する());
 
     let 起点 = match 作業ディレクトリを解決する() {

@@ -1,0 +1,54 @@
+name: release
+
+# 起点は `v` で始まるタグの push である。タグの綴りは xtask の release_tag.rs が決めており、
+# 担当者が片方だけを変えると、担当者がタグを送っても Release が作られなくなる。
+on:
+  push:
+    tags:
+      - "v*"
+
+# このワークフローは gh release create で Release を作るため、書き込みが要る。既定の読み取りだけでは足りない。
+permissions:
+  contents: write
+
+jobs:
+  windows:
+    # 利用者の環境が現在 Windows だけであるため、このワークフローが作る成果物も Windows 版だけである。
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      # cargo xtask verify は実 rclone を使う結合テストを含み、rclone が PATH に無ければ
+      # 明示的に失敗する。runner の image には rclone が入っていないため、この step が導入する。
+      # winget は image に入っていないが Chocolatey は入っているため、この step は choco を使う。
+      # Chocolatey の shim は既に PATH にある C:\ProgramData\chocolatey\bin へ置かれるので、
+      # 後続の step は追加の PATH 設定なしで rclone を見つける。
+      - name: rcloneを導入する
+        run: choco install rclone --yes --no-progress
+
+      # rust-toolchain.toml が 1.94.0 を固定しているため、rustup はこの step の
+      # cargo --version で固定されたツールチェインを取りに行く。ここで取っておくと、
+      # 後続の step の失敗がツールチェインの取得の失敗と混ざらない。
+      - name: 使う道具の版を記録する
+        run: |
+          rclone version
+          git lfs version
+          cargo --version
+
+      # このワークフローは、Release を作る前に検証列を完走させ、通らなければ Release を作らずに止まる。
+      - name: 検証列を完走させる
+        run: cargo xtask verify
+
+      - name: releaseプロファイルでビルドする
+        run: cargo build --release -p gitlfs-tools-cli --bin gitlfs-tools
+
+      # この step が付ける配布用の名前は、どのOSとどのCPUのための実行ファイルかを利用者が見て分かる綴りである。
+      - name: 成果物へ配布用の名前を付ける
+        run: Copy-Item target/release/gitlfs-tools.exe gitlfs-tools-windows-x86_64.exe
+
+      # この step が --verify-tag を付けているため、押されたタグが実在しない場合に gh は
+      # 新しいタグを作らずに中止する。この step は Release の本文の生成を --generate-notes に任せる。
+      - name: Releaseを作って成果物を添える
+        run: gh release create "$env:GITHUB_REF_NAME" gitlfs-tools-windows-x86_64.exe --verify-tag --generate-notes
+        env:
+          GITHUB_TOKEN: ${{ github.token }}

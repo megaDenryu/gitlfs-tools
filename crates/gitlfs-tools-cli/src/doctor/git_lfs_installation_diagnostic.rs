@@ -6,7 +6,7 @@
 use std::process::{Command, Stdio};
 
 use crate::child_process_exit_code::子プロセスの終了コードを表す文字列を作る;
-use crate::diagnostic_finding::診断結果;
+use crate::doctor::finding::診断結果;
 
 const 項目名: &str = "Git LFSの導入確認";
 const 導入手順の案内: &str = "Git LFSを導入してください(https://git-lfs.com/)";

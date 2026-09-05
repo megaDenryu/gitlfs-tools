@@ -49,9 +49,12 @@ cargo xtask check-line-count       # 100行原則と例外台帳で.rsファイ�
 cargo xtask check-error-code-table # トラブルシューティング.mdのエラーコード対応表と実装の一致を検査する
 cargo xtask check-v1-acceptance    # v1受入条件1〜9番を実git/git-lfs/rcloneで実証する
 cargo xtask install-binary         # releaseビルドし、Cargoのbinディレクトリへ実行ファイルを配置する
+cargo xtask release                # 検証を通し、Cargo.tomlの版でタグを作ってoriginへ送る
 ```
 
 `cargo xtask install-binary` の詳しい動作と、実行ファイルを `target/` の外へ置く理由は [_doc/利用/PC初期設定.md](_doc/利用/PC初期設定.md) の手順5にある。
+
+`cargo xtask release` は版を書き換えない。版を上げる担当者は、先に `Cargo.toml` の `[workspace.package]` の `version` を編集してコミットし、その後でこのコマンドを実行する。`--dry-run` を付けると、担当者はタグを作らずに、発行までに何が足りないかを確かめられる。担当者がタグを送ると [.github/workflows/release.yml](.github/workflows/release.yml) が動き、Windows版の実行ファイルを添えたGitHubのReleaseができる。開発しないPCの利用者は、そのReleaseから実行ファイルを取得する。
 
 ## 文書一覧（生存型）
 

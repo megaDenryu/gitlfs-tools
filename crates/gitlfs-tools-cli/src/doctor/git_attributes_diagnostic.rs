@@ -1,10 +1,10 @@
 //! `doctor`の追加診断: `.gitattributes`にGit LFSの追跡対象パターンが1つ以上あるかを
 //! 確かめる。`install`と`init-project`が両方成功しても、これが無いと大容量ファイルは
-//! 1つも追跡されない。Gitリポジトリの検出は`doctor_command`が1回だけ行い、この関数は
+//! 1つも追跡されない。Gitリポジトリの検出は`doctor::command`が1回だけ行い、この関数は
 //! その結果を受け取る。
 
 use crate::command_error::コマンド実行エラー;
-use crate::diagnostic_finding::診断結果;
+use crate::doctor::finding::診断結果;
 use crate::git_repository::Gitリポジトリ;
 
 const 項目名: &str = ".gitattributesのGit LFS追跡パターン確認";

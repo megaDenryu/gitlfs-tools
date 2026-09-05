@@ -6,7 +6,7 @@ use std::path::Path;
 
 use gitlfs_tools_config::{PC設定, PC設定の場所, PCプロファイル, プロジェクト設定, プロジェクト設定の場所, 設定エラー};
 
-use crate::diagnostic_finding::診断結果;
+use crate::doctor::finding::診断結果;
 
 const プロジェクト設定項目名: &str = "プロジェクト設定(.large-assets.toml)";
 const PC設定項目名: &str = "PC設定";

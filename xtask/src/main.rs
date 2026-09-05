@@ -7,6 +7,7 @@ mod binary_install;
 mod command_registry;
 mod error_code_table;
 mod line_count;
+mod release;
 mod verify_command;
 
 use std::process::ExitCode;

@@ -6,7 +6,7 @@
 use gitlfs_tools_domain::{保管エラー, 保管先基底パス};
 use gitlfs_tools_local::{保管先オブジェクトのローカルファイルパス, ローカル保管先ルートディレクトリ};
 
-use crate::storage_write_probe::{確認用のペイロード, 書き込み確認結果};
+use crate::doctor::storage_write_probe::{確認用のペイロード, 書き込み確認結果};
 
 /// 保管先の基点を保持し、その中の一時領域へ実際に書けるかを確かめる。
 pub(crate) struct ローカル保管先の書き込み確認 {

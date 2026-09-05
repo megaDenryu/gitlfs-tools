@@ -7,6 +7,7 @@ use crate::acceptance_check::受入試験コマンド;
 use crate::binary_install::実行ファイル配置コマンド;
 use crate::error_code_table::エラーコード対応表検査コマンド;
 use crate::line_count::行数検査コマンド;
+use crate::release::リリースタグ発行コマンド;
 use crate::verify_command::検証コマンド;
 
 /// サブコマンド1件が満たす契約。
@@ -29,6 +30,7 @@ impl サブコマンド登録簿 {
                 Box::new(エラーコード対応表検査コマンド),
                 Box::new(受入試験コマンド),
                 Box::new(実行ファイル配置コマンド),
+                Box::new(リリースタグ発行コマンド),
             ],
         }
     }

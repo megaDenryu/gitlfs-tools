@@ -5,11 +5,11 @@
 //! コード2で止まる。導入の1行目で止まる不足であるため、`doctor`が導入の前に検出する。
 //!
 //! 前提: フックが1つも無い状態は合格として扱う。`git lfs install --local`をこれから
-//! 実行する正常な状態であるためである。Gitリポジトリの検出は`doctor_command`が1回だけ
+//! 実行する正常な状態であるためである。Gitリポジトリの検出は`doctor::command`が1回だけ
 //! 行い、この関数はその結果を受け取る。
 
 use crate::command_error::コマンド実行エラー;
-use crate::diagnostic_finding::診断結果;
+use crate::doctor::finding::診断結果;
 use crate::git_lfs_hook::GitLfsフック;
 use crate::git_repository::Gitリポジトリ;
 

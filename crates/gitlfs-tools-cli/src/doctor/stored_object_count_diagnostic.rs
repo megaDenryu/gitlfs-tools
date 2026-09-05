@@ -11,7 +11,7 @@
 use gitlfs_tools_config::PCプロファイル;
 use gitlfs_tools_storage_port::オブジェクト保管庫;
 
-use crate::diagnostic_finding::診断結果;
+use crate::doctor::finding::診断結果;
 use crate::storage_assembly::起動確認を伴わずに保管庫を組み立てる;
 
 const 項目名: &str = "保管先にあるオブジェクトの数";

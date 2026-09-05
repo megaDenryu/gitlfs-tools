@@ -9,10 +9,10 @@
 use gitlfs_tools_config::{PCプロファイル, 保管先の指定};
 use gitlfs_tools_local::ローカル保管先ルートディレクトリ;
 
-use crate::diagnostic_finding::診断結果;
-use crate::doctor_scratch_directory::書き込み確認用の作業領域;
-use crate::local_storage_write_probe::ローカル保管先の書き込み確認;
-use crate::storage_write_probe::{保管先書き込み確認, 書き込み確認結果};
+use crate::doctor::finding::診断結果;
+use crate::doctor::scratch_directory::書き込み確認用の作業領域;
+use crate::doctor::local_storage_write_probe::ローカル保管先の書き込み確認;
+use crate::doctor::storage_write_probe::{保管先書き込み確認, 書き込み確認結果};
 use crate::timeout_process_runner::タイムアウト付きrclone実行器;
 
 const 項目名: &str = "保管先への書き込み確認";

@@ -2,7 +2,7 @@
 //! （設定の読み込み・依存の配線・起動）を担う（コード分割規約.md 1節）。
 //!
 //! 標準出力はGit LFSとの通信専用である。診断情報は標準エラー出力へ書く。ただし
-//! 引数付きで起動したサブコマンド（`install`・`init-project`・`doctor`・`help`）は
+//! 引数付きで起動したサブコマンド（`install`・`init-project`・`doctor`・`version`・`help`）は
 //! プロトコル通信ではないため、利用者向けの文字列を標準出力へ書いてよい
 //! （CLAUDE.md「標準出力の規律」）。引数なしの起動だけがプロトコル通信であり、
 //! この分岐（`launch_mode`）を変えるとGit LFSとの通信経路が壊れる。
@@ -12,43 +12,29 @@ mod check_objects_output;
 mod clone;
 mod child_process_exit_code;
 mod command_error;
-mod config_diagnostic;
 mod config_error_mapping;
-mod deprecated_setting_diagnostic;
-mod diagnostic_finding;
-mod doctor_command;
-mod doctor_scratch_directory;
-mod download_temp_directory_diagnostic;
-mod git_attributes_diagnostic;
+mod doctor;
 mod git_command_directory;
 mod git_hook_directory;
 mod git_lfs_file_listing;
-mod git_lfs_filter_diagnostic;
 mod git_lfs_hook;
-mod git_lfs_hook_diagnostic;
-mod git_lfs_installation_diagnostic;
 mod git_lfs_ls_files_json;
 mod git_lfs_storage_directory;
 mod git_repository;
-mod git_transfer_diagnostic;
 mod git_transfer_settings;
 mod init_project_command;
 mod install_command;
 mod install_target_path;
 mod launch_argument_error;
 mod launch_mode;
-mod local_storage_write_probe;
 mod object_check_scope;
 mod object_storage_selection;
 mod pc_config_location_resolution;
 mod profile_resolution;
+mod program_version;
 mod project_config_template;
 mod rclone_startup_check;
 mod storage_assembly;
-mod storage_reachability_diagnostic;
-mod storage_write_diagnostic;
-mod storage_write_probe;
-mod stored_object_count_diagnostic;
 mod subcommand;
 mod temp_directory_provisioning;
 mod timeout_process_runner;
@@ -66,6 +52,7 @@ use gitlfs_tools_protocol::プロトコルセッション;
 
 use crate::launch_mode::起動モード;
 use crate::pc_config_location_resolution::pc設定の場所を解決する;
+use crate::program_version::この実行ファイルの版;
 use crate::subcommand::サブコマンド;
 use crate::transfer_init_boundary::転送セッション初期化境界;
 use crate::usage_text::使い方テキスト;
@@ -77,9 +64,13 @@ fn main() -> ExitCode {
         Ok(起動モード::プロトコル通信) => プロトコル通信で起動する(),
         Ok(起動モード::サブコマンド実行(サブコマンド::導入 { 実行ファイルパス })) => install_command::導入を実行する(実行ファイルパス),
         Ok(起動モード::サブコマンド実行(サブコマンド::雛形生成 { プロファイル })) => init_project_command::雛形生成を実行する(プロファイル),
-        Ok(起動モード::サブコマンド実行(サブコマンド::検証)) => doctor_command::検証を実行する(),
+        Ok(起動モード::サブコマンド実行(サブコマンド::検証)) => doctor::command::検証を実行する(),
         Ok(起動モード::サブコマンド実行(サブコマンド::保管先の点検 { 範囲 })) => check_objects_command::保管先の点検を実行する(範囲),
         Ok(起動モード::サブコマンド実行(サブコマンド::複製 { 複製元, 複製先の指定 })) => clone::command::複製を実行する(複製元, 複製先の指定),
+        Ok(起動モード::サブコマンド実行(サブコマンド::版表示)) => {
+            println!("{}", この実行ファイルの版::cargoのパッケージ版から生成する().プログラム名と版の1行を組み立てる());
+            ExitCode::SUCCESS
+        }
         Ok(起動モード::サブコマンド実行(サブコマンド::ヘルプ)) => {
             println!("{使い方テキスト}");
             ExitCode::SUCCESS

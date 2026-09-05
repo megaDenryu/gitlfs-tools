@@ -8,7 +8,7 @@
 use gitlfs_tools_config::{PCプロファイル, 保管先の指定};
 use gitlfs_tools_local::ローカル保管先ルートディレクトリ;
 
-use crate::diagnostic_finding::診断結果;
+use crate::doctor::finding::診断結果;
 use crate::rclone_startup_check::rclone実行ファイルの起動可否を確かめる;
 
 const 方式が未確定のときの項目名: &str = "保管先への到達確認";

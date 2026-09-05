@@ -20,8 +20,11 @@ standalone custom transfer agentとして動作し、rclone経由で外部保管
 ```powershell
 # 実行場所: リポジトリルート
 cargo xtask
-cargo xtask verify   # cargo check -> clippy -D warnings -> cargo test
+cargo xtask verify              # cargo check -> clippy -D warnings -> cargo test
+cargo xtask release --dry-run   # タグを作らずに、発行までに何が足りないかを表示する
 ```
+
+版は `Cargo.toml` の `[workspace.package]` の `version` が正本であり、各クレートは `version.workspace = true` でこれを参照する。版を上げるのは人であり、`cargo xtask release` はその版でタグを打つだけである。タグの綴り `v<版>` は `xtask/src/release/release_tag.rs` と `.github/workflows/release.yml` の両方が持つため、担当者は片方だけを変えてはならない。
 
 新しい手順を作ったら、シェルスクリプトや個別のコマンド列ではなく`xtask`のサブコマンドとして
 登録する。登録なきツールの作成は禁止する。

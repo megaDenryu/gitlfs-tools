@@ -5,7 +5,7 @@
 
 use gitlfs_tools_config::PCプロファイル;
 
-use crate::diagnostic_finding::診断結果;
+use crate::doctor::finding::診断結果;
 
 const 項目名: &str = "PC設定に使われなくなった項目が残っていないか";
 

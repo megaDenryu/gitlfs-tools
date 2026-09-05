@@ -17,7 +17,7 @@ Google Drive for Desktop を導入する
   → Googleアカウントでサインインする
   → マウント先に保管フォルダを作る
   → PC設定 config.toml を作る
-  → agentの実行ファイルを配置する
+  → agentの実行ファイルを置く
 ```
 
 この5段階が終われば、そのPCでの準備は完了である。設定が揃ったかどうかの判定は `doctor` が行うが、`doctor` はGitリポジトリの設定も同時に見るため、全項目が合格するのは [プロジェクト導入.md](プロジェクト導入.md) の手順まで終えた後になる。
@@ -141,25 +141,86 @@ base_path = "C:/Users/<ユーザー名>/large-assets-test"
 gitlfs-tools init-project --profile test-large-assets
 ```
 
-## 手順5: agentの実行ファイルを配置する
+## 手順5: agentの実行ファイルを置く
 
-本リポジトリのソースからビルドし、`cargo clean` で消えない場所へ実行ファイルを置く。
+利用者は、そのPCの役割に応じて2つの方法から1つを選ぶ。**開発しないPCの利用者は、次の「GitHub の Releases から取得する」の手順を使う。** この手順は、基盤のソースもRustも入れないPCがこの基盤を使うための既定の方法である。
+
+### 開発しないPC: GitHub の Releases から取得する（既定）
+
+利用者は、ビルド済みの実行ファイルを次のページから取得する。
+
+```text
+https://github.com/megaDenryu/gitlfs-tools/releases
+```
+
+利用者は、最新の版の Assets（そのReleaseに添えられたファイルの一覧）にある `gitlfs-tools-windows-x86_64.exe` をダウンロードする。これは Windows の64ビット版のためにビルドした実行ファイルであり、Rustの導入を必要としない。
+
+次に、利用者は置き場所のディレクトリを作る。この文書は `%LOCALAPPDATA%\Programs\gitlfs-tools\` を例として挙げるが、利用者は別の場所を選んでもよい。**利用者は、`cargo clean` や一時ファイルの掃除で消える場所を選んではならない。** 利用者がGit設定へ登録するのはこの実行ファイルの絶対パスであり、そのファイルが消えると転送が失敗する。
+
+```powershell
+# 実行場所: どのフォルダでもよい
+New-Item -ItemType Directory -Force "$env:LOCALAPPDATA\Programs\gitlfs-tools"
+```
+
+利用者は、ダウンロードしたファイルを `gitlfs-tools.exe` という名前へ変えて、作ったディレクトリへ置く。**利用者は、この改名を省略してはならない。** 配布用の名前はどの環境向けかを示すためのものであり、Git設定へ登録する名前としては長い。利用者が名前を `gitlfs-tools.exe` に固定しておくと、次の版へ入れ替えるときに利用者はファイルを置き換えるだけで済み、Git設定を登録し直さなくてよい。
+
+```powershell
+# 実行場所: ダウンロードしたファイルがあるフォルダ（既定は %USERPROFILE%\Downloads）
+Move-Item gitlfs-tools-windows-x86_64.exe "$env:LOCALAPPDATA\Programs\gitlfs-tools\gitlfs-tools.exe"
+```
+
+利用者は、この置き場所を自分のPATHへ加える。**基盤はPATHを書き換えない。** 環境変数の変更は他のソフトへ影響し、元へ戻す手段を基盤が用意できないためである。利用者がこの置き場所をPATHへ加えるかどうかは、利用者が決める。次のコマンドが書き換えるのは利用者自身のPATHだけであり、このコマンドはPC全体のPATHに触れない。利用者は、書き換えた結果を次に開いたPowerShellから使える。
+
+```powershell
+# 実行場所: どのフォルダでもよい
+$置き場 = "$env:LOCALAPPDATA\Programs\gitlfs-tools"
+$利用者のパス = [Environment]::GetEnvironmentVariable("Path", "User")
+[Environment]::SetEnvironmentVariable("Path", "$利用者のパス;$置き場", "User")
+```
+
+上のコマンドを使わず、Windows の「環境変数を編集」の画面（スタートメニューで「環境変数」を検索する）から、利用者の変数 `Path` へ同じ置き場所を追加してもよい。結果は同じである。
+
+利用者は、新しいPowerShellを開いて版を確かめる。
+
+```powershell
+# 実行場所: どのフォルダでもよい
+gitlfs-tools version
+```
+
+`gitlfs-tools 1.0.0` のように版が1行で表示されれば、配置は完了である。何も表示されずコマンドが見つからないと言われた場合、利用者はPATHへの追加が済んでいるかと、PowerShellを開き直したかの2つを確かめる。
+
+### 開発するPC: ソースからビルドして置く
+
+この方法の対象は、このリポジトリ（gitlfs-tools）のソースを持ち、Rust を導入しているPCである。ソースを持たないPCの利用者は、このコマンドを実行できない。
 
 ```powershell
 # 実行場所: このリポジトリ（gitlfs-tools）のルート
 cargo xtask install-binary
 ```
 
-このコマンドはreleaseプロファイルでビルドし、Cargoの `bin` ディレクトリへ実行ファイルを置き、配置先の絶対パスを表示する。rustup で Rust を導入していれば、このディレクトリはPATHに通っている。通っていない場合は、そのことと対処をコマンドが案内する。**このコマンドはPATHを書き換えない。** 環境変数の変更は他のソフトへ影響し、元へ戻す手段を利用者が持たないためである。
+このコマンドはreleaseプロファイルでビルドし、Cargoの `bin` ディレクトリへ実行ファイルを置き、配置先の絶対パスを表示する。rustup で Rust を導入していれば、このディレクトリはPATHに通っている。通っていない場合は、そのことと対処をコマンドが案内する。**このコマンドはPATHを書き換えない。** 理由は上と同じである。
 
 配置できたかどうかは、新しいPowerShellで次を実行して確かめる。
 
 ```powershell
 # 実行場所: どのフォルダでもよい
-gitlfs-tools help
+gitlfs-tools version
 ```
 
-使い方の一覧が表示されれば配置は完了である。
+版が1行で表示されれば配置は完了である。
+
+### 2台のPCでは同じ版を使う
+
+利用者は、複数のPCでこの基盤を使う場合、どのPCにも同じ版を入れる。版が違うと、片方のPCでだけ転送が失敗したときに、利用者は原因が設定の違いなのか版の違いなのかを切り分けられなくなる。
+
+利用者は、版が揃っているかどうかを、各PCで `doctor` を実行して先頭の行で見比べる。
+
+```powershell
+# 実行場所: 対象のGitリポジトリのルート
+gitlfs-tools doctor
+```
+
+先頭に `[情報] gitlfs-tools の版: 1.0.0` の形の行が出る。`doctor` はこの行を合否の判定に数えない。版が古いか新しいかを機械が決められないためである。利用者は、2台の版が一致しているかどうかを自分で見て判断する。
 
 ## このファイルはコミットする / しない
 
@@ -169,7 +230,7 @@ PC初期設定で作るファイルは、いずれもGitの管理対象にしな
 |---|---|---|---|
 | PC設定 `config.toml` | `C:\Users\<ユーザー名>\AppData\Roaming\gitlfs-tools\config\config.toml` | しない | PCごとに違う保管先の絶対パスを持つ |
 | rclone設定 `rclone.conf` | `C:\Users\<ユーザー名>\AppData\Roaming\rclone\rclone.conf` | しない | リモート定義とOAuthトークンを持つ |
-| agentの実行ファイル | Cargoの `bin` ディレクトリ | しない | ビルド生成物である |
+| agentの実行ファイル | Releasesから取得した場合は利用者が決めた置き場、ソースからビルドした場合はCargoの `bin` ディレクトリ | しない | ビルド生成物である |
 | 保管先のオブジェクト | `<base_path>\lfs\objects\...` | しない | Git LFS が管理する実体であり、Gitのツリーには入らない |
 
 これらのファイルはどれも、そもそもGitリポジトリの中に置かれない。Gitへコミットするファイルは [プロジェクト導入.md](プロジェクト導入.md) の表が扱う。

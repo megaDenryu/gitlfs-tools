@@ -5,11 +5,11 @@
 //! 前提: `filter.lfs.required`は`git lfs install`が必ず書き込むキーであり、実機の
 //! `git lfs 3.5.1`で`git lfs install --local`を実行して`filter.lfs.process`・
 //! `filter.lfs.required`・`filter.lfs.clean`・`filter.lfs.smudge`の4キーが登録される
-//! ことを確かめた上で選んだ（推測で書かない）。Gitリポジトリの検出は`doctor_command`が
+//! ことを確かめた上で選んだ（推測で書かない）。Gitリポジトリの検出は`doctor::command`が
 //! 1回だけ行い、この関数はその結果を受け取る。
 
 use crate::command_error::コマンド実行エラー;
-use crate::diagnostic_finding::診断結果;
+use crate::doctor::finding::診断結果;
 use crate::git_repository::Gitリポジトリ;
 
 const 項目名: &str = "このリポジトリでのGit LFSフィルター登録確認";

@@ -1,6 +1,6 @@
 //! `check-objects`の表示行の組み立て。表示行を作るところまでを純粋な変換としてこの型が持ち、
 //! 標準出力への書き出しは呼び出し側（`check_objects_command`）が行う
-//! （`diagnostic_finding.rs`と同じ分け方）。
+//! （`doctor/finding.rs`と同じ分け方）。
 
 use gitlfs_tools_transfer::{欠落オブジェクト, 点検報告};
 
