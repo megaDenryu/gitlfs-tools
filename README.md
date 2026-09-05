@@ -35,7 +35,7 @@ Google Drive、または別の保管先
 
 ## 状態
 
-v1を実装中である。仕様の正本は [Issue #2](https://github.com/megaDenryu/git-lfs-rclone-storage/issues/2)、実装のIssueは #3 から #8 である。
+v1は、受入条件10（2台のPCで同一コミットから同一の資産を復元する実証）を除いて完成している。仕様の正本は [Issue #2](https://github.com/megaDenryu/git-lfs-rclone-storage/issues/2) である。実装のIssue #3 から #9 は完了しており、残る実証は [Issue #10](https://github.com/megaDenryu/git-lfs-rclone-storage/issues/10) が扱う。
 
 ## 開発者向けの入口
 
@@ -44,10 +44,11 @@ v1を実装中である。仕様の正本は [Issue #2](https://github.com/megaD
 ```powershell
 # 実行場所: リポジトリルート
 cargo xtask
-cargo xtask verify              # cargo check -> clippy -D warnings -> cargo test
-cargo xtask check-line-count    # 100行原則と例外台帳で.rsファイルを検査する
-cargo xtask check-v1-acceptance # v1受入条件1〜9番を実git/git-lfs/rcloneで実証する
-cargo xtask install-binary      # releaseビルドし、Cargoのbinディレクトリへ実行ファイルを配置する
+cargo xtask verify                 # 行数検査 -> エラーコード表の検査 -> cargo check -> clippy -D warnings -> cargo test
+cargo xtask check-line-count       # 100行原則と例外台帳で.rsファイルを検査する
+cargo xtask check-error-code-table # トラブルシューティング.mdのエラーコード対応表と実装の一致を検査する
+cargo xtask check-v1-acceptance    # v1受入条件1〜9番を実git/git-lfs/rcloneで実証する
+cargo xtask install-binary         # releaseビルドし、Cargoのbinディレクトリへ実行ファイルを配置する
 ```
 
 `cargo xtask install-binary` の詳しい動作と、実行ファイルを `target/` の外へ置く理由は [_doc/利用/PC初期設定.md](_doc/利用/PC初期設定.md) の手順5にある。
