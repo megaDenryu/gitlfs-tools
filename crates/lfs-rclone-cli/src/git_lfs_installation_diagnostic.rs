@@ -11,7 +11,7 @@ use crate::diagnostic_finding::診断結果;
 const 項目名: &str = "Git LFSの導入確認";
 const 導入手順の案内: &str = "Git LFSを導入してください(https://git-lfs.com/)";
 
-pub(crate) fn 診断する() -> 診断結果 {
+pub(crate) fn git_lfsの導入を診断する() -> 診断結果 {
     match Command::new("git").args(["lfs", "version"]).stdin(Stdio::null()).output() {
         Ok(出力) if 出力.status.success() => 診断結果::問題なし { 項目: 項目名 },
         Ok(出力) => {

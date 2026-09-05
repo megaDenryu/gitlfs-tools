@@ -10,7 +10,7 @@ use crate::git_repository::Gitリポジトリ;
 const 項目名: &str = ".gitattributesのGit LFS追跡パターン確認";
 const 追跡パターンの目印: &str = "filter=lfs";
 
-pub(crate) fn 診断する(リポジトリ検出結果: Result<&Gitリポジトリ, &コマンド実行エラー>) -> 診断結果 {
+pub(crate) fn gitattributesの追跡パターンを診断する(リポジトリ検出結果: Result<&Gitリポジトリ, &コマンド実行エラー>) -> 診断結果 {
     let リポジトリ = match リポジトリ検出結果 {
         Ok(リポジトリ) => リポジトリ,
         Err(エラー) => return 診断結果::不足から生成する(項目名, エラー, "対象のGitリポジトリの中でdoctorを実行してください"),

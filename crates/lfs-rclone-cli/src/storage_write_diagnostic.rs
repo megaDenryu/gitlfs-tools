@@ -17,7 +17,7 @@ use crate::timeout_process_runner::タイムアウト付きrclone実行器;
 
 const 項目名: &str = "保管先への書き込み確認";
 
-pub(crate) fn 診断する(プロファイル: Option<&PCプロファイル>) -> 診断結果 {
+pub(crate) fn 保管先への書き込みを診断する(プロファイル: Option<&PCプロファイル>) -> 診断結果 {
     let Some(プロファイル) = プロファイル else {
         return 診断結果::不足から生成する(項目名, &"プロファイルが解決できていません", "先に設定の不足を解消してください");
     };

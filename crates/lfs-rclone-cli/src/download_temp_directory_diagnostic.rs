@@ -12,7 +12,7 @@ use crate::temp_directory_provisioning::一時保存先を作成する;
 
 const 項目名: &str = "ダウンロード一時ディレクトリの作成確認";
 
-pub(crate) fn 診断する(起点: &Path) -> 診断結果 {
+pub(crate) fn ダウンロード一時ディレクトリの作成可否を診断する(起点: &Path) -> 診断結果 {
     let 保管ディレクトリ = match GitLFS保管ディレクトリ::作業ディレクトリから問い合わせる(起点) {
         Ok(ディレクトリ) => ディレクトリ,
         Err(エラー) => {

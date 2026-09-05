@@ -16,7 +16,7 @@ use crate::git_repository::Gitリポジトリ;
 const 項目名: &str = "このリポジトリのGit LFSフックが標準の内容かの確認";
 const リポジトリ外の案内: &str = "対象のGitリポジトリの中でdoctorを実行してください";
 
-pub(crate) fn 診断する(リポジトリ検出結果: Result<&Gitリポジトリ, &コマンド実行エラー>) -> 診断結果 {
+pub(crate) fn このリポジトリのgit_lfsフックの内容を診断する(リポジトリ検出結果: Result<&Gitリポジトリ, &コマンド実行エラー>) -> 診断結果 {
     let リポジトリ = match リポジトリ検出結果 {
         Ok(リポジトリ) => リポジトリ,
         Err(エラー) => return 診断結果::不足から生成する(項目名, エラー, リポジトリ外の案内),

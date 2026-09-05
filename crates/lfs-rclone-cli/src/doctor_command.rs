@@ -32,7 +32,7 @@ pub(crate) fn 検証を実行する() -> ExitCode {
 
 fn 診断結果を集める() -> Vec<診断結果> {
     let mut 結果一覧 = Vec::new();
-    結果一覧.push(git_lfs_installation_diagnostic::診断する());
+    結果一覧.push(git_lfs_installation_diagnostic::git_lfsの導入を診断する());
 
     let 起点 = match 作業ディレクトリを解決する() {
         Ok(ディレクトリ) => ディレクトリ,
@@ -50,20 +50,20 @@ fn 診断結果を集める() -> Vec<診断結果> {
         }
     };
 
-    let 設定診断 = config_diagnostic::診断する(&起点, &pc設定の場所);
+    let 設定診断 = config_diagnostic::設定の読み込みとプロファイル解決を診断する(&起点, &pc設定の場所);
     結果一覧.extend(設定診断.結果一覧);
 
-    結果一覧.push(storage_reachability_diagnostic::診断する(設定診断.プロファイル.as_ref()));
-    結果一覧.push(download_temp_directory_diagnostic::診断する(&起点));
-    結果一覧.push(deprecated_setting_diagnostic::診断する(設定診断.プロファイル.as_ref()));
-    結果一覧.push(storage_write_diagnostic::診断する(設定診断.プロファイル.as_ref()));
-    結果一覧.push(stored_object_count_diagnostic::診断する(設定診断.プロファイル.as_ref()));
+    結果一覧.push(storage_reachability_diagnostic::保管先への到達を診断する(設定診断.プロファイル.as_ref()));
+    結果一覧.push(download_temp_directory_diagnostic::ダウンロード一時ディレクトリの作成可否を診断する(&起点));
+    結果一覧.push(deprecated_setting_diagnostic::使われなくなった設定項目の残存を診断する(設定診断.プロファイル.as_ref()));
+    結果一覧.push(storage_write_diagnostic::保管先への書き込みを診断する(設定診断.プロファイル.as_ref()));
+    結果一覧.push(stored_object_count_diagnostic::保管先にあるオブジェクトの数を診断する(設定診断.プロファイル.as_ref()));
 
     let リポジトリ検出結果 = Gitリポジトリ::現在地から検出する();
-    結果一覧.push(git_transfer_diagnostic::診断する(リポジトリ検出結果.as_ref()));
-    結果一覧.push(git_lfs_filter_diagnostic::診断する(リポジトリ検出結果.as_ref()));
-    結果一覧.push(git_lfs_hook_diagnostic::診断する(リポジトリ検出結果.as_ref()));
-    結果一覧.push(git_attributes_diagnostic::診断する(リポジトリ検出結果.as_ref()));
+    結果一覧.push(git_transfer_diagnostic::gitのcustom_transfer設定を診断する(リポジトリ検出結果.as_ref()));
+    結果一覧.push(git_lfs_filter_diagnostic::このリポジトリのgit_lfsフィルター登録を診断する(リポジトリ検出結果.as_ref()));
+    結果一覧.push(git_lfs_hook_diagnostic::このリポジトリのgit_lfsフックの内容を診断する(リポジトリ検出結果.as_ref()));
+    結果一覧.push(git_attributes_diagnostic::gitattributesの追跡パターンを診断する(リポジトリ検出結果.as_ref()));
 
     結果一覧
 }

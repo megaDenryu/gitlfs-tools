@@ -12,7 +12,7 @@ use crate::git_transfer_settings::設定キー一覧;
 
 const 項目名: &str = "Gitのcustom transfer設定";
 
-pub(crate) fn 診断する(リポジトリ検出結果: Result<&Gitリポジトリ, &コマンド実行エラー>) -> 診断結果 {
+pub(crate) fn gitのcustom_transfer設定を診断する(リポジトリ検出結果: Result<&Gitリポジトリ, &コマンド実行エラー>) -> 診断結果 {
     let リポジトリ = match リポジトリ検出結果 {
         Ok(リポジトリ) => リポジトリ,
         Err(エラー) => return 診断結果::不足から生成する(項目名, エラー, "対象のGitリポジトリの中でdoctorを実行してください"),

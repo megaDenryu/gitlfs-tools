@@ -15,7 +15,7 @@ use crate::git_repository::Gitリポジトリ;
 const 項目名: &str = "このリポジトリでのGit LFSフィルター登録確認";
 const 確認キー: &str = "filter.lfs.required";
 
-pub(crate) fn 診断する(リポジトリ検出結果: Result<&Gitリポジトリ, &コマンド実行エラー>) -> 診断結果 {
+pub(crate) fn このリポジトリのgit_lfsフィルター登録を診断する(リポジトリ検出結果: Result<&Gitリポジトリ, &コマンド実行エラー>) -> 診断結果 {
     let リポジトリ = match リポジトリ検出結果 {
         Ok(リポジトリ) => リポジトリ,
         Err(エラー) => return 診断結果::不足から生成する(項目名, エラー, "対象のGitリポジトリの中でdoctorを実行してください"),

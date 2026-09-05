@@ -19,7 +19,7 @@ pub(crate) struct 設定診断結果 {
     pub(crate) プロファイル: Option<PCプロファイル>,
 }
 
-pub(crate) fn 診断する(起点: &Path, pc設定の場所: &PC設定の場所) -> 設定診断結果 {
+pub(crate) fn 設定の読み込みとプロファイル解決を診断する(起点: &Path, pc設定の場所: &PC設定の場所) -> 設定診断結果 {
     let mut 結果一覧 = Vec::new();
 
     let プロジェクト設定 = match プロジェクト設定の場所::探索する(起点).and_then(|場所| 場所.読み込む()) {
