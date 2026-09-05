@@ -1,6 +1,6 @@
-# git-lfs-rclone-storage
+# gitlfs-tools
 
-このリポジトリ（git-lfs-rclone-storage）は、複数のPCと複数のGitリポジトリで共用する、大容量バイナリ資産の保管基盤である。
+このリポジトリ（gitlfs-tools）は、複数のPCと複数のGitリポジトリで共用する、大容量バイナリ資産の保管基盤である。
 
 このリポジトリが作るプログラムは、Git LFS（Git Large File Storage。大容量ファイルの実体の代わりに参照情報をGitへ記録する仕組み）の standalone custom transfer agent（Git LFS が単独で起動する、実体の転送だけを引き受けるプログラム）として動作し、マウント済みのクラウドストレージ、または rclone 経由の外部保管先へオブジェクトを保存・取得する。
 
@@ -10,7 +10,7 @@
 各Gitリポジトリ（.gitattributes と Git LFS pointer をコミットする）
 （pointerとは、実体の代わりにGitへ記録される参照情報のことである）
   ↓
-git-lfs-rclone-storage（custom transfer agent。Git LFS が引数なしで起動する）
+gitlfs-tools（custom transfer agent。Git LFS が引数なしで起動する）
   ↓
 マウント済みのローカルパス、または rclone
   ↓
@@ -35,7 +35,7 @@ Google Drive、または別の保管先
 
 ## 状態
 
-v1は、受入条件10（2台のPCで同一コミットから同一の資産を復元する実証）を除いて完成している。仕様の正本は [Issue #2](https://github.com/megaDenryu/git-lfs-rclone-storage/issues/2) である。実装のIssue #3 から #9 は完了しており、残る実証は [Issue #10](https://github.com/megaDenryu/git-lfs-rclone-storage/issues/10) が扱う。
+v1は、受入条件10（2台のPCで同一コミットから同一の資産を復元する実証）を除いて完成している。仕様の正本は [Issue #2](https://github.com/megaDenryu/gitlfs-tools/issues/2) である。実装のIssue #3 から #9 は完了しており、残る実証は [Issue #10](https://github.com/megaDenryu/gitlfs-tools/issues/10) が扱う。
 
 ## 開発者向けの入口
 
@@ -70,4 +70,4 @@ cargo xtask install-binary         # releaseビルドし、Cargoのbinディレ�
 
 `_doc/開発スレッド/` はログ型（追記のみ）であり、索引への登録を要しない。
 
-エラーコード対応表の正本は [_doc/利用/トラブルシューティング.md](_doc/利用/トラブルシューティング.md) にある。実装の正本は `lfs-rclone-protocol` の `error_code.rs` である。採用した外部ライブラリの一覧と採用理由は [_doc/設計/アーキテクチャ.md](_doc/設計/アーキテクチャ.md) の「5. 採用ライブラリ」にある。
+エラーコード対応表の正本は [_doc/利用/トラブルシューティング.md](_doc/利用/トラブルシューティング.md) にある。実装の正本は `gitlfs-tools-protocol` の `error_code.rs` である。採用した外部ライブラリの一覧と採用理由は [_doc/設計/アーキテクチャ.md](_doc/設計/アーキテクチャ.md) の「5. 採用ライブラリ」にある。

@@ -13,7 +13,7 @@
 use std::path::Path;
 
 pub fn 確かめる(作業ツリー: &Path, 設定に残した一時ディレクトリ: &Path) -> Result<String, String> {
-    let 置き場 = 作業ツリー.join(".git").join("lfs").join("tmp").join("rclone-storage-agent");
+    let 置き場 = 作業ツリー.join(".git").join("lfs").join("tmp").join("gitlfs-tools");
     if !置き場.is_dir() {
         return Err(format!("ダウンロードの一時ファイル置き場がリポジトリ内に作られていない: {}", 置き場.display()));
     }

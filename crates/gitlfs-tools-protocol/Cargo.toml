@@ -1,0 +1,18 @@
+[package]
+name = "gitlfs-tools-protocol"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+publish = false
+
+[dependencies]
+gitlfs-tools-domain.workspace = true
+gitlfs-tools-transfer.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+
+[lints]
+workspace = true

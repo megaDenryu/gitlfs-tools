@@ -1,4 +1,4 @@
-# CLAUDE.md — git-lfs-rclone-storage
+# CLAUDE.md — gitlfs-tools
 
 グローバルCLAUDE.md（`~/.claude/CLAUDE.md`）を前提とし、本リポジトリ固有の事項だけを書く。
 Rustの書き方は `~/.claude/skills/rust` を、層の決め方は `~/.claude/skills/アーキテクチャ先行` を、
@@ -61,7 +61,7 @@ Rust内部で意味を表す識別子は日本語で書く。受理条件はグ�
 - Git LFS custom transfer protocolのJSONフィールド名・イベント名（`event`, `oid`, `size`, `path`, `init`, `upload`, `download`, `terminate`, `complete`）
 - rcloneのCLI引数（`lsjson`, `copyto`, `moveto` 等）
 - TOMLのkey（`schema_version`, `profile`, `rclone_remote`, `base_path`, `temp_directory`, `transfer_timeout_seconds`）
-- Git設定のkey（`lfs.customtransfer.rclone-storage.path` 等）
+- Git設定のkey（`lfs.customtransfer.gitlfs-tools.path` 等）
 - Cargoのパッケージ名
 
 ## 標準出力の規律
@@ -69,7 +69,7 @@ Rust内部で意味を表す識別子は日本語で書く。受理条件はグ�
 **標準出力はGit LFSとの通信専用である。** 1行1JSONを書き、各行の直後にflushする。
 
 - 診断情報・ログはすべて標準エラー出力へ書く。
-- `println!` を `lfs-rclone-cli` と `lfs-rclone-protocol` の外で使わない。
+- `println!` を `gitlfs-tools-cli` と `gitlfs-tools-protocol` の外で使わない。
 - rcloneの標準出力・標準エラー出力は捕捉し、agentの標準出力へ流さない。
 
 この規律を破るとGit LFS側のJSON解析が壊れ、転送全体が失敗する。
@@ -87,7 +87,7 @@ Rust内部で意味を表す識別子は日本語で書く。受理条件はグ�
 **ファイル名・ディレクトリ名は英語の `snake_case`**、**中身の識別子は日本語**とする。既存のRustリポジトリ（Blitzdrache0、GameScriptingTheory）と同じ慣習である。
 
 ```rust
-// crates/lfs-rclone-domain/src/object_identifier.rs
+// crates/gitlfs-tools-domain/src/object_identifier.rs
 pub struct オブジェクト識別子(String);
 ```
 
@@ -104,7 +104,7 @@ pub struct オブジェクト識別子(String);
 
 担当者は、保管先の `lfs` ディレクトリを消すコマンドを書かない。後片づけは、担当者が自分で作ったオブジェクトのパスを名指しで消す形にする。
 
-実マウント先が要るのは、担当者が Google Drive for Desktop 自身の挙動（クラウドへの同期の遅れ、ストリーミング状態（実体がクラウドにあり、読むときに取りに行く状態）のファイルの読み出し、ドライブ文字の割り当て）を調べるときだけである。基盤の実装の検証にマウントは要らない（`lfs-rclone-local` は標準ライブラリのファイル操作しか使わない）。担当者がその調査を行う場合も、保管先の根ではなく調査専用のフォルダを作り、その中だけで行う。
+実マウント先が要るのは、担当者が Google Drive for Desktop 自身の挙動（クラウドへの同期の遅れ、ストリーミング状態（実体がクラウドにあり、読むときに取りに行く状態）のファイルの読み出し、ドライブ文字の割り当て）を調べるときだけである。基盤の実装の検証にマウントは要らない（`gitlfs-tools-local` は標準ライブラリのファイル操作しか使わない）。担当者がその調査を行う場合も、保管先の根ではなく調査専用のフォルダを作り、その中だけで行う。
 
 `cargo xtask check-v1-acceptance` は `std::env::temp_dir()` の下の一時作業域を保管先に見立てて動くため、この規約の対象外である。
 

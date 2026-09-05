@@ -19,7 +19,7 @@ impl オブジェクト保管ルート {
     }
 
     /// rcloneのlocal backend用に、絶対パスをドライブ文字と残りパス（`/`区切り）へ分ける
-    /// （`lfs-rclone-rclone`のlocal backend結合テストと同じ手法）。
+    /// （`gitlfs-tools-rclone`のlocal backend結合テストと同じ手法）。
     pub fn ドライブと残りへ分解する(&self) -> Result<(String, String), String> {
         let 文字列 = self.0.to_str().ok_or("保管先ルートのパスがUTF-8ではありません")?;
         let 正規化 = 文字列.replace('\\', "/");

@@ -1,14 +1,14 @@
 [workspace]
 resolver = "3"
 members = [
-    "crates/lfs-rclone-domain",
-    "crates/lfs-rclone-storage-port",
-    "crates/lfs-rclone-config",
-    "crates/lfs-rclone-transfer",
-    "crates/lfs-rclone-rclone",
-    "crates/lfs-rclone-local",
-    "crates/lfs-rclone-protocol",
-    "crates/lfs-rclone-cli",
+    "crates/gitlfs-tools-domain",
+    "crates/gitlfs-tools-storage-port",
+    "crates/gitlfs-tools-config",
+    "crates/gitlfs-tools-transfer",
+    "crates/gitlfs-tools-rclone",
+    "crates/gitlfs-tools-local",
+    "crates/gitlfs-tools-protocol",
+    "crates/gitlfs-tools-cli",
     "xtask",
 ]
 
@@ -16,16 +16,16 @@ members = [
 edition = "2024"
 rust-version = "1.94"
 license = "MIT"
-repository = "https://github.com/megaDenryu/git-lfs-rclone-storage"
+repository = "https://github.com/megaDenryu/gitlfs-tools"
 
 [workspace.dependencies]
-lfs-rclone-domain = { path = "crates/lfs-rclone-domain" }
-lfs-rclone-storage-port = { path = "crates/lfs-rclone-storage-port" }
-lfs-rclone-config = { path = "crates/lfs-rclone-config" }
-lfs-rclone-transfer = { path = "crates/lfs-rclone-transfer" }
-lfs-rclone-rclone = { path = "crates/lfs-rclone-rclone" }
-lfs-rclone-local = { path = "crates/lfs-rclone-local" }
-lfs-rclone-protocol = { path = "crates/lfs-rclone-protocol" }
+gitlfs-tools-domain = { path = "crates/gitlfs-tools-domain" }
+gitlfs-tools-storage-port = { path = "crates/gitlfs-tools-storage-port" }
+gitlfs-tools-config = { path = "crates/gitlfs-tools-config" }
+gitlfs-tools-transfer = { path = "crates/gitlfs-tools-transfer" }
+gitlfs-tools-rclone = { path = "crates/gitlfs-tools-rclone" }
+gitlfs-tools-local = { path = "crates/gitlfs-tools-local" }
+gitlfs-tools-protocol = { path = "crates/gitlfs-tools-protocol" }
 
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"

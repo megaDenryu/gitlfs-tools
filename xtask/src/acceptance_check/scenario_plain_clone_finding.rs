@@ -17,7 +17,7 @@ impl 主鎖状態 {
         let 未設定pcディレクトリ = 作業域.子ディレクトリ("plain_clone_check_unconfigured_pc")?;
         let 結果 = self.pc_b.git実行(
             作業域.ルート(),
-            &[("LFS_RCLONE_PC_CONFIG_DIR", 未設定pcディレクトリ.as_os_str())],
+            &[("GITLFS_TOOLS_PC_CONFIG_DIR", 未設定pcディレクトリ.as_os_str())],
             &["clone", &self.origin.to_string_lossy(), &先.to_string_lossy()],
         )?;
         let 終了状態文字列 = if 結果.成功したか { "成功" } else { "失敗" };

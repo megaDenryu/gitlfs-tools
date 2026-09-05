@@ -50,7 +50,7 @@ impl 模擬PC {
     ///
     /// 注意1: `push`・`pull`・`checkout`・`clone`はgitの内部からGit LFSのhookやsmudge
     /// filterを介して対象実行ファイルを子孫プロセスとして起動しうる。対象実行ファイルは
-    /// `LFS_RCLONE_PC_CONFIG_DIR`が無いと実ユーザーの標準設定ディレクトリを見に行こうと
+    /// `GITLFS_TOOLS_PC_CONFIG_DIR`が無いと実ユーザーの標準設定ディレクトリを見に行こうと
     /// してしまうため、`git`を起動するすべての経路でこの環境変数を渡す。
     ///
     /// 注意2: machine単位の`git lfs install --skip-repo`がglobal templateへpost-checkout
@@ -63,7 +63,7 @@ impl 模擬PC {
         コマンド
             .current_dir(作業ディレクトリ)
             .env("GIT_CONFIG_GLOBAL", &self.分離global設定ファイル)
-            .env("LFS_RCLONE_PC_CONFIG_DIR", self.pc設定.パス())
+            .env("GITLFS_TOOLS_PC_CONFIG_DIR", self.pc設定.パス())
             .env("GIT_CLONE_PROTECTION_ACTIVE", "false")
             .args(引数);
         for (キー, 値) in 追加環境変数 {

@@ -158,6 +158,97 @@ dependencies = [
 ]
 
 [[package]]
+name = "gitlfs-tools-cli"
+version = "0.1.0"
+dependencies = [
+ "gitlfs-tools-config",
+ "gitlfs-tools-domain",
+ "gitlfs-tools-local",
+ "gitlfs-tools-protocol",
+ "gitlfs-tools-rclone",
+ "gitlfs-tools-storage-port",
+ "gitlfs-tools-transfer",
+ "serde",
+ "serde_json",
+ "sha2",
+ "tempfile",
+ "thiserror",
+]
+
+[[package]]
+name = "gitlfs-tools-config"
+version = "0.1.0"
+dependencies = [
+ "directories",
+ "gitlfs-tools-domain",
+ "serde",
+ "tempfile",
+ "thiserror",
+ "toml",
+]
+
+[[package]]
+name = "gitlfs-tools-domain"
+version = "0.1.0"
+dependencies = [
+ "sha2",
+ "tempfile",
+ "thiserror",
+ "uuid",
+]
+
+[[package]]
+name = "gitlfs-tools-local"
+version = "0.1.0"
+dependencies = [
+ "gitlfs-tools-domain",
+ "gitlfs-tools-storage-port",
+ "sha2",
+ "tempfile",
+]
+
+[[package]]
+name = "gitlfs-tools-protocol"
+version = "0.1.0"
+dependencies = [
+ "gitlfs-tools-domain",
+ "gitlfs-tools-transfer",
+ "serde",
+ "serde_json",
+ "thiserror",
+]
+
+[[package]]
+name = "gitlfs-tools-rclone"
+version = "0.1.0"
+dependencies = [
+ "gitlfs-tools-domain",
+ "gitlfs-tools-storage-port",
+ "serde",
+ "serde_json",
+ "sha2",
+ "tempfile",
+]
+
+[[package]]
+name = "gitlfs-tools-storage-port"
+version = "0.1.0"
+dependencies = [
+ "gitlfs-tools-domain",
+ "thiserror",
+]
+
+[[package]]
+name = "gitlfs-tools-transfer"
+version = "0.1.0"
+dependencies = [
+ "gitlfs-tools-domain",
+ "gitlfs-tools-storage-port",
+ "sha2",
+ "tempfile",
+]
+
+[[package]]
 name = "hashbrown"
 version = "0.17.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -188,97 +279,6 @@ dependencies = [
  "cfg-if",
  "futures-util",
  "wasm-bindgen",
-]
-
-[[package]]
-name = "lfs-rclone-cli"
-version = "0.1.0"
-dependencies = [
- "lfs-rclone-config",
- "lfs-rclone-domain",
- "lfs-rclone-local",
- "lfs-rclone-protocol",
- "lfs-rclone-rclone",
- "lfs-rclone-storage-port",
- "lfs-rclone-transfer",
- "serde",
- "serde_json",
- "sha2",
- "tempfile",
- "thiserror",
-]
-
-[[package]]
-name = "lfs-rclone-config"
-version = "0.1.0"
-dependencies = [
- "directories",
- "lfs-rclone-domain",
- "serde",
- "tempfile",
- "thiserror",
- "toml",
-]
-
-[[package]]
-name = "lfs-rclone-domain"
-version = "0.1.0"
-dependencies = [
- "sha2",
- "tempfile",
- "thiserror",
- "uuid",
-]
-
-[[package]]
-name = "lfs-rclone-local"
-version = "0.1.0"
-dependencies = [
- "lfs-rclone-domain",
- "lfs-rclone-storage-port",
- "sha2",
- "tempfile",
-]
-
-[[package]]
-name = "lfs-rclone-protocol"
-version = "0.1.0"
-dependencies = [
- "lfs-rclone-domain",
- "lfs-rclone-transfer",
- "serde",
- "serde_json",
- "thiserror",
-]
-
-[[package]]
-name = "lfs-rclone-rclone"
-version = "0.1.0"
-dependencies = [
- "lfs-rclone-domain",
- "lfs-rclone-storage-port",
- "serde",
- "serde_json",
- "sha2",
- "tempfile",
-]
-
-[[package]]
-name = "lfs-rclone-storage-port"
-version = "0.1.0"
-dependencies = [
- "lfs-rclone-domain",
- "thiserror",
-]
-
-[[package]]
-name = "lfs-rclone-transfer"
-version = "0.1.0"
-dependencies = [
- "lfs-rclone-domain",
- "lfs-rclone-storage-port",
- "sha2",
- "tempfile",
 ]
 
 [[package]]

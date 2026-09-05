@@ -1,6 +1,6 @@
 //! 項目9: repository履歴、tracked files、sample設定、テスト出力を検査しても認証情報と
 //! PC固有の実pathを含まないことを確かめる。受入試験が作る一時fixtureではなく、この
-//! git-lfs-rclone-storageリポジトリ自身が持つtracked filesを対象にする。
+//! gitlfs-toolsリポジトリ自身が持つtracked filesを対象にする。
 //!
 //! 判定は「秘密を指すキー名が現れるか」ではなく「本物の秘密の値・本物のPC固有の実path
 //! であるか」で行う。文書が秘密の扱いを説明するためにキー名へ言及する記述と、

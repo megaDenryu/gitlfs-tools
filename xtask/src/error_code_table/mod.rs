@@ -41,7 +41,7 @@ impl 検査対象の配置 {
         let ルート = std::env::current_dir()
             .map_err(|失敗| format!("カレントディレクトリを取得できなかった: {失敗}"))?;
         Ok(Self {
-            実装ソース: ルート.join("crates").join("lfs-rclone-protocol").join("src").join("error_code.rs"),
+            実装ソース: ルート.join("crates").join("gitlfs-tools-protocol").join("src").join("error_code.rs"),
             対応表文書: ルート.join("_doc").join("利用").join("トラブルシューティング.md"),
         })
     }

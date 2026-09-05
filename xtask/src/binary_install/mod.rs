@@ -55,11 +55,11 @@ fn パスの通し方を案内する(配置ディレクトリ: &実行ファイ�
     let ディレクトリ = 配置ディレクトリ.ディレクトリのパス().display();
     if 配置ディレクトリ.パスが通っているか() {
         eprintln!("配置先ディレクトリはPATHに含まれている: {ディレクトリ}");
-        eprintln!("次の手順: 対象リポジトリで git-lfs-rclone-storage install を実行する");
+        eprintln!("次の手順: 対象リポジトリで gitlfs-tools install を実行する");
         return;
     }
     eprintln!("配置先ディレクトリはPATHに含まれていない: {ディレクトリ}");
     eprintln!("このディレクトリをPATHへ加えると、名前だけで起動できる。加えるかどうかは利用者が決める");
     eprintln!("加えない場合は、対象リポジトリで次を実行する");
-    eprintln!("  git-lfs-rclone-storage install --path <上記の配置先>");
+    eprintln!("  gitlfs-tools install --path <上記の配置先>");
 }

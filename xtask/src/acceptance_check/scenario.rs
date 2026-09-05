@@ -28,9 +28,9 @@ pub fn 実行する() -> Result<(), String> {
         tracked_files_have_no_secrets::実行する(),
     ));
 
-    // 前提: `LFS_RCLONE_ACCEPT_KEEP_WORKSPACE`を設定すると一時作業域を削除せずに残す。
+    // 前提: `GITLFS_TOOLS_ACCEPT_KEEP_WORKSPACE`を設定すると一時作業域を削除せずに残す。
     // 失敗を再現・調査する開発者専用の脱出口であり、既定(未設定)では常に片づける。
-    let 後始末結果 = if std::env::var("LFS_RCLONE_ACCEPT_KEEP_WORKSPACE").is_ok() { Ok(()) } else { 作業域.後始末する() };
+    let 後始末結果 = if std::env::var("GITLFS_TOOLS_ACCEPT_KEEP_WORKSPACE").is_ok() { Ok(()) } else { 作業域.後始末する() };
     後始末結果と検査結果をまとめて報告する(&結果一覧, &追加所見, 後始末結果)
 }
 

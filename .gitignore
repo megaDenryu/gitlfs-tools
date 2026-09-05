@@ -6,7 +6,7 @@
 *.rclone.conf
 rclone.conf
 local-config.toml
-git-lfs-rclone-storage.toml
+gitlfs-tools.toml
 
 # 試験生成物
 /test-output/

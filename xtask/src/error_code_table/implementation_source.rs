@@ -1,4 +1,4 @@
-//! `crates/lfs-rclone-protocol/src/error_code.rs`が定める番号割り当ての読み取り。
+//! `crates/gitlfs-tools-protocol/src/error_code.rs`が定める番号割り当ての読み取り。
 //!
 //! xtaskは外部依存も他クレートへの依存も持たないため、実装の一覧はソースを文字列として
 //! 読み取って得る。読み取る形は`エラーコード::値()`のmatch腕である`Self::<名前> => <番号>,`

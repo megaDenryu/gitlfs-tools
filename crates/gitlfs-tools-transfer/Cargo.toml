@@ -1,0 +1,19 @@
+[package]
+name = "gitlfs-tools-transfer"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+publish = false
+
+[dependencies]
+gitlfs-tools-domain.workspace = true
+gitlfs-tools-storage-port.workspace = true
+
+[dev-dependencies]
+sha2.workspace = true
+tempfile.workspace = true
+
+[lints]
+workspace = true

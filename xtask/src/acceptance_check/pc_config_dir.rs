@@ -1,4 +1,4 @@
-//! PC設定ディレクトリ（`LFS_RCLONE_PC_CONFIG_DIR`が指す先）を表す値型。config.tomlの
+//! PC設定ディレクトリ（`GITLFS_TOOLS_PC_CONFIG_DIR`が指す先）を表す値型。config.tomlの
 //! 書き込みをこの型のメソッドへ閉じる（グローバルCLAUDE.md「役割の型は自分の配置を知る」）。
 
 use std::fs;

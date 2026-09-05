@@ -1,0 +1,32 @@
+[package]
+name = "gitlfs-tools-rclone"
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+repository.workspace = true
+publish = false
+
+[features]
+# テスト専用の偽rclone実行ファイル（`src/bin/fake_rclone.rs`）を有効にする機能。既定は無効。
+# `cargo build --workspace`のような通常のビルドで製品の実行ファイルと並んで
+# `fake_rclone.exe`が生成されるのを防ぐ。結合テストはこの機能を有効にした状態でのみ通る。
+test-support = []
+
+[[bin]]
+name = "fake_rclone"
+path = "src/bin/fake_rclone.rs"
+required-features = ["test-support"]
+
+[dependencies]
+gitlfs-tools-domain.workspace = true
+gitlfs-tools-storage-port.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+
+[dev-dependencies]
+tempfile.workspace = true
+sha2.workspace = true
+
+[lints]
+workspace = true

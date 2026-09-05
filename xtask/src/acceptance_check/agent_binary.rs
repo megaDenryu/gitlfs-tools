@@ -1,11 +1,11 @@
-//! 対象実行ファイル（`git-lfs-rclone-storage`）のビルドと絶対パスの解決。`cargo run`は
-//! 使わない。Gitに登録する`lfs.customtransfer.rclone-storage.path`は永続する絶対パスで
+//! 対象実行ファイル（`gitlfs-tools`）のビルドと絶対パスの解決。`cargo run`は
+//! 使わない。Gitに登録する`lfs.customtransfer.gitlfs-tools.path`は永続する絶対パスで
 //! ある必要があり、`cargo run`が挟む一時実行経路と一致させないためである。
 
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
-const 二進表現名: &str = "git-lfs-rclone-storage";
+const 二進表現名: &str = "gitlfs-tools";
 
 #[derive(Clone)]
 pub struct 対象実行ファイルパス(PathBuf);
@@ -15,7 +15,7 @@ impl 対象実行ファイルパス {
     pub fn ビルドして解決する() -> Result<Self, String> {
         let cargo実行ファイル = std::env::var("CARGO").unwrap_or_else(|_| "cargo".to_owned());
         let 結果 = Command::new(&cargo実行ファイル)
-            .args(["build", "--package", "lfs-rclone-cli", "--bin", 二進表現名])
+            .args(["build", "--package", "gitlfs-tools-cli", "--bin", 二進表現名])
             .status()
             .map_err(|失敗| format!("cargo buildを起動できなかった: {失敗}"))?;
         if !結果.success() {

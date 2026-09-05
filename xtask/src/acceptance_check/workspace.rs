@@ -9,7 +9,7 @@ pub struct 一時作業域(PathBuf);
 
 impl 一時作業域 {
     pub fn 作成する() -> Result<Self, String> {
-        let 固有名 = format!("git-lfs-rclone-storage-accept-{}-{}", std::process::id(), 現在時刻のナノ秒());
+        let 固有名 = format!("gitlfs-tools-accept-{}-{}", std::process::id(), 現在時刻のナノ秒());
         let ルート = std::env::temp_dir().join(固有名);
         std::fs::create_dir_all(&ルート).map_err(|失敗| format!("{}を作成できなかった: {失敗}", ルート.display()))?;
         Ok(Self(ルート))

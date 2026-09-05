@@ -60,12 +60,14 @@ New-Item -ItemType Directory "G:\マイドライブ\git-lfs-rclone-storage"
 
 このフォルダの下に `lfs\objects\sha256\...` という構造ができる。利用者はフォルダの中身を手で編集してはならない。
 
+フォルダの名前は何でもよい。この文書の例が `git-lfs-rclone-storage` と綴るのは、基盤の旧名で作った保管フォルダに既に実体が置かれており、同じGoogleアカウントの2台目のPCにも同じ名前で見えるためである。利用者は、既にあるフォルダを使う。
+
 ## 手順4: PC設定を作る
 
 PC設定とは、論理プロファイル名と、そのPCでの実際の保管先との対応を書くファイルのことである。置き場所は次のパスに固定されている。
 
 ```text
-C:\Users\<ユーザー名>\AppData\Roaming\git-lfs-rclone-storage\config\config.toml
+C:\Users\<ユーザー名>\AppData\Roaming\gitlfs-tools\config\config.toml
 ```
 
 内容の全量は次の4行である。
@@ -136,7 +138,7 @@ base_path = "C:/Users/<ユーザー名>/large-assets-test"
 
 ```powershell
 # 実行場所: 試験用のGitリポジトリのルート
-git-lfs-rclone-storage init-project --profile test-large-assets
+gitlfs-tools init-project --profile test-large-assets
 ```
 
 ## 手順5: agentの実行ファイルを配置する
@@ -144,7 +146,7 @@ git-lfs-rclone-storage init-project --profile test-large-assets
 本リポジトリのソースからビルドし、`cargo clean` で消えない場所へ実行ファイルを置く。
 
 ```powershell
-# 実行場所: このリポジトリ（git-lfs-rclone-storage）のルート
+# 実行場所: このリポジトリ（gitlfs-tools）のルート
 cargo xtask install-binary
 ```
 
@@ -154,7 +156,7 @@ cargo xtask install-binary
 
 ```powershell
 # 実行場所: どのフォルダでもよい
-git-lfs-rclone-storage help
+gitlfs-tools help
 ```
 
 使い方の一覧が表示されれば配置は完了である。
@@ -165,7 +167,7 @@ PC初期設定で作るファイルは、いずれもGitの管理対象にしな
 
 | ファイル | 置き場所 | コミットするか | 理由 |
 |---|---|---|---|
-| PC設定 `config.toml` | `C:\Users\<ユーザー名>\AppData\Roaming\git-lfs-rclone-storage\config\config.toml` | しない | PCごとに違う保管先の絶対パスを持つ |
+| PC設定 `config.toml` | `C:\Users\<ユーザー名>\AppData\Roaming\gitlfs-tools\config\config.toml` | しない | PCごとに違う保管先の絶対パスを持つ |
 | rclone設定 `rclone.conf` | `C:\Users\<ユーザー名>\AppData\Roaming\rclone\rclone.conf` | しない | リモート定義とOAuthトークンを持つ |
 | agentの実行ファイル | Cargoの `bin` ディレクトリ | しない | ビルド生成物である |
 | 保管先のオブジェクト | `<base_path>\lfs\objects\...` | しない | Git LFS が管理する実体であり、Gitのツリーには入らない |
@@ -180,7 +182,7 @@ PC初期設定で作るファイルは、いずれもGitの管理対象にしな
 
 1. 利用者は、現在の `base_path` の下の `lfs` ディレクトリを、新しい保管先へそのまま複製する。利用者はディレクトリ構成を変えてはならない。オブジェクトのパスは内容から決まるため、複製先でも同じパスでなければならない。
 2. 利用者は、PC設定の `base_path`（rclone方式なら `rclone_remote` も）を新しい保管先へ書き換える。
-3. 利用者は、対象のGitリポジトリで `git-lfs-rclone-storage doctor` を実行し、全項目が合格することを確かめる。
+3. 利用者は、対象のGitリポジトリで `gitlfs-tools doctor` を実行し、全項目が合格することを確かめる。
 
 複製先の保管先からGit側を一切変更せずに同じコミットを復元できることは、受入条件の実証で確認済みである（[_doc/開発スレッド/2026-08-27_v1受入条件1-9番実証.md](../開発スレッド/2026-08-27_v1受入条件1-9番実証.md)）。
 

@@ -6,7 +6,7 @@
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
-const 実行ファイルの語幹: &str = "git-lfs-rclone-storage";
+const 実行ファイルの語幹: &str = "gitlfs-tools";
 
 /// 配置元となる、releaseプロファイルでビルドされた実行ファイル。
 pub struct リリースビルド成果物(PathBuf);
@@ -15,7 +15,7 @@ impl リリースビルド成果物 {
     pub fn ビルドして解決する() -> Result<Self, String> {
         let cargo実行ファイル = std::env::var("CARGO").unwrap_or_else(|_| "cargo".to_owned());
         let 結果 = Command::new(cargo実行ファイル)
-            .args(["build", "--release", "--package", "lfs-rclone-cli", "--bin", 実行ファイルの語幹])
+            .args(["build", "--release", "--package", "gitlfs-tools-cli", "--bin", 実行ファイルの語幹])
             .status()
             .map_err(|失敗| format!("cargo buildを起動できなかった: {失敗}"))?;
         if !結果.success() {

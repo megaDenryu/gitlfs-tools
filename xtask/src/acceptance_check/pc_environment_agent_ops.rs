@@ -10,10 +10,10 @@ use crate::acceptance_check::process_output::子プロセス出力;
 
 impl 模擬PC {
     /// 本エージェントのサブコマンド（`install`・`init-project`・`doctor`等）を、この
-    /// PCのPC設定ディレクトリを`LFS_RCLONE_PC_CONFIG_DIR`として渡して実行する。
+    /// PCのPC設定ディレクトリを`GITLFS_TOOLS_PC_CONFIG_DIR`として渡して実行する。
     pub fn エージェントを実行する(&self, 作業ディレクトリ: &Path, 引数: &[&str]) -> Result<子プロセス出力, String> {
         let mut コマンド = Command::new(self.実行ファイル().パス());
-        コマンド.current_dir(作業ディレクトリ).env("LFS_RCLONE_PC_CONFIG_DIR", self.pc設定().パス()).args(引数);
+        コマンド.current_dir(作業ディレクトリ).env("GITLFS_TOOLS_PC_CONFIG_DIR", self.pc設定().パス()).args(引数);
         起動して結果を包む(&mut コマンド, "対象実行ファイル", 引数)
     }
 }
