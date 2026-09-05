@@ -11,6 +11,9 @@ pub(crate) enum 起動引数エラー {
     #[error("{サブコマンド}の引数{引数名}には値が必要です")]
     値が必要な引数 { サブコマンド: String, 引数名: String },
 
+    #[error("cloneには複製元のURLが必要です")]
+    複製元のurlが必要,
+
     #[error("init-projectには--profileが必要です")]
     プロファイル名が必要,
 

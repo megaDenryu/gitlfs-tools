@@ -3,16 +3,20 @@
 //! 使わない（CLAUDE.md「全Gitリポジトリへ無条件に適用してはならない」、Issue #2 7.3節）。
 //! 既存の値がある場合も上書きし、変更なし・更新・新規のどれだったかを標準出力へ示す
 //! （再実行しても同じ結果へ収束する、Git設定コマンドの一般的な慣習に合わせた）。
+//!
+//! `対象リポジトリへ設定を登録する`は`clone`サブコマンドも呼ぶ。登録の綴りを複製しない
+//! ため、実行場所を引数で受ける形にしてある（Issue #11）。
 
 use std::process::ExitCode;
 
 use crate::command_error::コマンド実行エラー;
+use crate::git_command_directory::Gitコマンドの実行場所;
 use crate::git_repository::{Gitリポジトリ, 設定書き込み結果};
 use crate::git_transfer_settings::Git転送設定;
 use crate::install_target_path::登録する実行ファイルパス;
 
 pub(crate) fn 導入を実行する(上書きパス: Option<登録する実行ファイルパス>) -> ExitCode {
-    match 対象リポジトリへ設定を登録する(上書きパス) {
+    match 対象リポジトリへ設定を登録する(Gitコマンドの実行場所::現在地, 上書きパス) {
         Ok(()) => ExitCode::SUCCESS,
         Err(エラー) => {
             eprintln!("導入に失敗しました: {エラー}");
@@ -21,12 +25,15 @@ pub(crate) fn 導入を実行する(上書きパス: Option<登録する実行�
     }
 }
 
-fn 対象リポジトリへ設定を登録する(上書きパス: Option<登録する実行ファイルパス>) -> Result<(), コマンド実行エラー> {
+pub(crate) fn 対象リポジトリへ設定を登録する(
+    実行場所: Gitコマンドの実行場所,
+    上書きパス: Option<登録する実行ファイルパス>,
+) -> Result<(), コマンド実行エラー> {
     let 実行ファイルパス = match 上書きパス {
         Some(パス) => パス,
         None => 登録する実行ファイルパス::現在の実行ファイルから生成する()?,
     };
-    let リポジトリ = Gitリポジトリ::現在地から検出する()?;
+    let リポジトリ = Gitリポジトリ::実行場所を指定して検出する(実行場所)?;
     let 設定 = Git転送設定::生成する(実行ファイルパス);
 
     println!("対象リポジトリへcustom transfer設定を登録します。");

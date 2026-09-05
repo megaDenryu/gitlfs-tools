@@ -9,6 +9,7 @@
 
 mod check_objects_command;
 mod check_objects_output;
+mod clone;
 mod child_process_exit_code;
 mod command_error;
 mod config_diagnostic;
@@ -19,6 +20,7 @@ mod doctor_command;
 mod doctor_scratch_directory;
 mod download_temp_directory_diagnostic;
 mod git_attributes_diagnostic;
+mod git_command_directory;
 mod git_hook_directory;
 mod git_lfs_file_listing;
 mod git_lfs_filter_diagnostic;
@@ -77,6 +79,7 @@ fn main() -> ExitCode {
         Ok(起動モード::サブコマンド実行(サブコマンド::雛形生成 { プロファイル })) => init_project_command::雛形生成を実行する(プロファイル),
         Ok(起動モード::サブコマンド実行(サブコマンド::検証)) => doctor_command::検証を実行する(),
         Ok(起動モード::サブコマンド実行(サブコマンド::保管先の点検 { 範囲 })) => check_objects_command::保管先の点検を実行する(範囲),
+        Ok(起動モード::サブコマンド実行(サブコマンド::複製 { 複製元, 複製先の指定 })) => clone::command::複製を実行する(複製元, 複製先の指定),
         Ok(起動モード::サブコマンド実行(サブコマンド::ヘルプ)) => {
             println!("{使い方テキスト}");
             ExitCode::SUCCESS

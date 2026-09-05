@@ -1,12 +1,36 @@
 //! テスト用の隔離Gitリポジトリを作る。実ユーザーのGit設定を汚染しないよう、常に
 //! `--local`検査対象の一時ディレクトリの中だけへ`git init`する。
 
+use std::ffi::OsStr;
 use std::path::Path;
 use std::process::Command;
 
 pub fn 初期化する(ディレクトリ: &Path) -> Result<(), Box<dyn std::error::Error>> {
     let 終了状態 = Command::new("git").args(["init", "-q"]).current_dir(ディレクトリ).status()?;
     if 終了状態.success() { Ok(()) } else { Err("git initに失敗しました".into()) }
+}
+
+/// 送信先として使う裸リポジトリ（作業ツリーを持たないリポジトリ）を作る。
+pub fn 裸リポジトリを初期化する(ディレクトリ: &Path) -> Result<(), Box<dyn std::error::Error>> {
+    std::fs::create_dir_all(ディレクトリ)?;
+    let 終了状態 = Command::new("git").args(["init", "-q", "--bare"]).current_dir(ディレクトリ).status()?;
+    if 終了状態.success() { Ok(()) } else { Err("git init --bareに失敗しました".into()) }
+}
+
+/// 環境変数を与えてgitを実行する。agentを経由する送信は、PC設定の置き場所を差し替えた
+/// 環境で動かす必要があるため、環境変数を受け取る経路を別に持つ。
+pub fn 環境変数を与えて実行する(
+    ディレクトリ: &Path,
+    引数: &[&str],
+    環境変数: &[(&str, &OsStr)],
+) -> Result<(), Box<dyn std::error::Error>> {
+    let mut コマンド = Command::new("git");
+    コマンド.args(引数).current_dir(ディレクトリ);
+    for (キー, 値) in 環境変数 {
+        コマンド.env(キー, 値);
+    }
+    let 終了状態 = コマンド.status()?;
+    if 終了状態.success() { Ok(()) } else { Err(format!("gitコマンドに失敗しました: {引数:?}").into()) }
 }
 
 /// 実体の送信を止める旧方式の`pre-push`フックを置く。`git lfs install --local`が

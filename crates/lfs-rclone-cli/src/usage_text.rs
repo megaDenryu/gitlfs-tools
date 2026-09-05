@@ -31,6 +31,13 @@ git-lfs-rclone-storage - Git LFS custom transfer agent
       保管先に在るがGit LFSが参照しないオブジェクトは、他のリポジトリが置いたものであり
       正常なため報告しない。
 
+  git-lfs-rclone-storage clone <リポジトリのURL> [<ディレクトリ名>]
+      初回cloneの4手順(clone・git lfs install --local・install・git lfs pull)を1コマンドで行う。
+      ディレクトリ名を省略すると、URLの末尾から導いて表示する。
+      git cloneの他の引数(--branch・--depth等)は通さない。それらが要る場合は
+      _doc/利用/プロジェクト導入.mdに残した従来の4手順を使う。
+      途中で失敗しても、複製した作業ツリーは消さずに残す。
+
   git-lfs-rclone-storage help
       この使い方を表示する。
 ";
