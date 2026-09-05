@@ -5,10 +5,8 @@
 //! 「実体を送り直せ」を意味する。同じコマンドが2種類の行動を要求すると、出力を読んだ人が
 //! 何をすべきか迷うため、別のサブコマンドへ分けている。
 
-use std::path::Path;
 use std::process::ExitCode;
 
-use lfs_rclone_config::{PC設定の場所, PCプロファイル, プロジェクト設定の場所};
 use lfs_rclone_transfer::保管先オブジェクト在否点検サービス;
 
 use crate::check_objects_output::点検結果の表示;
@@ -16,6 +14,7 @@ use crate::command_error::コマンド実行エラー;
 use crate::git_lfs_file_listing::GitLFS追跡ファイル一覧;
 use crate::object_check_scope::点検範囲;
 use crate::pc_config_location_resolution::pc設定の場所を解決する;
+use crate::profile_resolution::プロファイル解決に使う設定の置き場所;
 use crate::storage_assembly::起動確認を済ませた保管庫を組み立てる;
 use crate::working_directory_resolution::作業ディレクトリを解決する;
 
@@ -42,7 +41,9 @@ fn 点検して表示を作る(範囲: 点検範囲) -> Result<点検結果の�
         説明: format!("PC設定の場所を解決できませんでした: {エラー}"),
     })?;
 
-    let プロファイル = プロファイルを解決する(&起点, &pc設定の場所)?;
+    let プロファイル = プロファイル解決に使う設定の置き場所::生成する(起点, pc設定の場所)
+        .論理プロファイルを解決する()
+        .map_err(|エラー| コマンド実行エラー::設定の解決失敗 { 説明: エラー.to_string() })?;
     let 保管庫 = 起動確認を済ませた保管庫を組み立てる(&プロファイル)
         .map_err(|エラー| コマンド実行エラー::保管先の準備失敗 { 説明: エラー.to_string() })?;
 
@@ -52,17 +53,4 @@ fn 点検して表示を作る(範囲: 点検範囲) -> Result<点検結果の�
         .map_err(|エラー| コマンド実行エラー::保管先の点検失敗 { 説明: エラー.to_string() })?;
 
     Ok(点検結果の表示::生成する(範囲, 追跡ファイル一覧, 報告))
-}
-
-fn プロファイルを解決する(起点: &Path, pc設定の場所: &PC設定の場所) -> Result<PCプロファイル, コマンド実行エラー> {
-    let プロジェクト設定 = プロジェクト設定の場所::探索する(起点)
-        .and_then(|場所| 場所.読み込む())
-        .map_err(|エラー| コマンド実行エラー::設定の解決失敗 { 説明: エラー.to_string() })?;
-    let pc設定 = pc設定の場所
-        .読み込む()
-        .map_err(|エラー| コマンド実行エラー::設定の解決失敗 { 説明: エラー.to_string() })?;
-    pc設定
-        .プロファイルを解決する(プロジェクト設定.プロファイル())
-        .cloned()
-        .map_err(|エラー| コマンド実行エラー::設定の解決失敗 { 説明: エラー.to_string() })
 }
